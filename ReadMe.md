@@ -1,6 +1,11 @@
 # USB Interceptor
 Man in the middle of your USB Connection between Desktop and Appliance
 
+## DISCLAIMER
+Of course no warranty whatsoever.
+Do not even think of using this stuff in mission critical environement, it's all done in "Spikemode" so no TDD applied (shame on me)
+All work in progress, maybe I'll have it released somewhen in the future.
+
 ## What it does
 It "cuts in half" your USB Wire and allows you to intercept all the traffic in between.
 Originally it is intended to intercept G-Code commands sent to a CNC mill and introspect them for additional actions.
@@ -16,7 +21,7 @@ cannot. At least not as I know of, perhaps someone finds another solution. Anywa
 why not use them.
 
 ## What it needs
-- A Raspberry Pi (2B will suffice)
+- A Raspberry Pi (2B will suffice) equipped with a JRE.
 - An USB2Serial Adapter (CH340, CH341 or FTDI)
 - 3 Jumper Wires
 - A wallwart to power the Raspberry Pi
@@ -68,7 +73,9 @@ for disabling.
 After a reboot the ```echo Hello > /dev/ttyAMA0``` command should result in a Hello printed on the terminal window of your 
 desktop.
 
-Unfortunately even this does not suffice. Because jxtx implementation for java is not too smart, it will only look for 
+///////////////
+Excurse. This is no longer needed as I switched from RXTX to jserialcomm. But perhaps someone might find the information useful anyway:
+Unfortunately even this does not suffice. Because rxtx implementation for java is not too smart, it will only look for 
 serials according to a name pattern that ```/dev/ttyAMA0``` does not fulfill. So you need to create a symlink to the serial. 
 
 To do you need to create a file named (the name is important): /etc/udev/rules.d/80-serial.rules. You can do with vi: ```sudo vi /etc/udev/rules.d/80-serial.rules```. Paste in this content:
@@ -80,14 +87,16 @@ KERNEL=="ttyACM0", SYMLINK+="ttyS6",GROUP="dialout",MODE:=0666
 
 Save and reboot.
 (Tested for RPI 2b, RPI 3 and 4 may behave different)
+/////////////////
 
+Build Interceptor.jar using ```gradle jar``` task.
 
-The interceptor also has some dependencies, that are to be placed. The file RXTXcomm.jar has to be on the classpath and
-the shared libs on the library path. I guess there is documentation around of where to get this stuff from.
+Copy over the dependend libs pi4j-core.jar and jSerialComm-2.6.2.jar next to the Interceptor.jar.
+
 Now you can start the interceptor:
 
-```java -Djava.library.path=/usr/lib/jni -cp /usr/share/java/RXTXcomm.jar:.:Interceptor.jar de.dbconsult.interceptor.Interceptor mill /dev/ttyUSB0 pc /dev/ttyS5```
+```sudo java -cp ./jSerialComm-2.6.2.jar:./pi4j-core.jar:Interceptor.jar de.dbconsult.interceptor.Interceptor mill USB pc AMA0```
+best go create a shell script for that command. The name of the appliance in my case is mill connected to the USB port, and the desktop is hooked up using the /dev/ttyAMA0 serial. USB and AMA0 are "jSerialComm friendly names".
 
  That will start a default workflow that simply logs all traffic between the desktop and a device.
-
 
