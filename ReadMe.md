@@ -1,5 +1,5 @@
 # USB Interceptor
-Man in the middle of your USB Connection between Desktop and Appliance
+Man in the middle of your USB Connection between Desktop and CNC Mill
 
 ## DISCLAIMER
 Of course no warranty whatsoever.
@@ -7,9 +7,10 @@ Do not even think of using this stuff in mission critical environement, it's all
 All work in progress, maybe I'll have it released somewhen in the future.
 
 ## What it does
-It "cuts in half" your USB Wire and allows you to intercept all the traffic in between.
-Originally it is intended to intercept G-Code commands sent to a CNC mill and introspect them for additional actions.
-Also see the examples section.
+It "cuts in half" your USB Wire and allows you to intercept all the traffic in between. 
+Run this on a Raspberry Pi to have additional control by powering GPIO pins on G-Code commands or introduce even new commands.
+As of now it is intended to intercept G-Code commands sent to a CNC mill and introspect them for additional actions.
+Also see the examples section (tbd).
 
 ## Why do I need such a complicated setup
 Well, often you simply have no other choice then communication to your appliance using serial. Still you might want to 
@@ -91,7 +92,7 @@ Save and reboot.
 
 Build Interceptor.jar using ```gradle jar``` task.
 
-Copy over the dependend libs pi4j-core.jar and jSerialComm-2.6.2.jar next to the Interceptor.jar.
+Copy over the dependend libs:  pi4j-core.jar and jSerialComm-2.6.2.jar next to the Interceptor.jar.
 
 Now you can start the interceptor:
 
