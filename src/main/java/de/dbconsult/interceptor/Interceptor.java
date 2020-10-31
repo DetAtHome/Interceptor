@@ -2,48 +2,32 @@ package de.dbconsult.interceptor;
 
 import de.dbconsult.interceptor.serial.SerialCommunication;
 import de.dbconsult.interceptor.serial.SerialData;
-import de.dbconsult.interceptor.serial.TwoWaySerialComm;
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPin;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.PinDirection;
-import com.pi4j.io.gpio.PinMode;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.io.gpio.trigger.GpioCallbackTrigger;
-import com.pi4j.io.gpio.trigger.GpioPulseStateTrigger;
-import com.pi4j.io.gpio.trigger.GpioSetStateTrigger;
-import com.pi4j.io.gpio.trigger.GpioSyncStateTrigger;
-import com.pi4j.io.gpio.event.GpioPinListener;
-import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
-import com.pi4j.io.gpio.event.GpioPinEvent;
-import com.pi4j.io.gpio.event.GpioPinListenerDigital;
-import com.pi4j.io.gpio.event.PinEventType;
-
-import java.util.StringTokenizer;
 
 public class Interceptor {
 
 
     private static long time = System.currentTimeMillis();
+    private static long counter;
     private static final long DELAY=200;
     private static boolean tooggle = false;
     private static boolean dtrChange = false;
 
     public static void main(String[] args) {
 
+
+        SerialDescriptor[] serials = parseArguments(args);
+        try {
+            setupSerials(serials);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println("Configured workflow chain: ");
         for(Workflow workflow:WorkflowRepository.getInstance().getConfiguredWorkflows()) {
             System.out.println(workflow.getClass().getName());
         }
-
-        SerialDescriptor[] serials = parseArguments(args);
-        setupSerials(serials);
-
+        counter = 0;
         while(true) {
+            counter++;
 /*            SerialData request = SerialsRepository.getInstance().getPc().getComm().readFully();
             StringTokenizer commandTokenizer = new StringTokenizer(request.getAsString(),"\r\n");
             while (commandTokenizer.hasMoreTokens()) {
@@ -56,15 +40,35 @@ public class Interceptor {
                 }
             }
 */            // get from 1
-            SerialData request = SerialsRepository.getInstance().getPc().getComm().readFully();
+            SerialData request = new SerialData();
+            SerialData response = new SerialData();
+            if(args[0].startsWith("test")) {
+                 time = System.currentTimeMillis();
+                 request.setAsString(counter + " - " + System.currentTimeMillis());
+                 request.setData(request.getAsString().getBytes());
+                 request.setLen(request.getData().length);
+                 while(System.currentTimeMillis() - time <DELAY) {}
+            } else {
+                request = SerialsRepository.getInstance().getPc().getComm().readFully();
+            }
+
             // enqueue
-            if(request!=null && request.getLen()>0)
-                Orchestrator.getInstance().enqueueToWorkflow(serials[0], request.getData(), request.getLen());
+            if (request != null && request.getLen() > 0)
+                Orchestrator.getInstance().enqueueToWorkflow(counter, serials[0], request.getData(), request.getLen());
             // get from 2
-            SerialData response = SerialsRepository.getInstance().getMill().getComm().readFully();
+            if(args[2].startsWith("test")) {
+                time = System.currentTimeMillis();
+                response.setAsString(counter + " - " + System.currentTimeMillis());
+                response.setData(response.getAsString().getBytes());
+                response.setLen(response.getData().length);
+                while(System.currentTimeMillis() - time <DELAY) {}
+
+            } else {
+                response = SerialsRepository.getInstance().getMill().getComm().readFully();
+            }
             // enqueue
-            if(response!=null && response.getLen()>0)
-                Orchestrator.getInstance().enqueueToWorkflow(serials[1], response.getData(), response.getLen());
+            if (response != null && response.getLen() > 0)
+                Orchestrator.getInstance().enqueueToWorkflow(counter, serials[1], response.getData(), response.getLen());
 
         }
     }
@@ -82,7 +86,7 @@ public class Interceptor {
         return result;
     }
 
-    private static void setupSerials(SerialDescriptor[] serials) {
+    private static void setupSerials(SerialDescriptor[] serials) throws Exception {
         SerialCommunication com1 = new SerialCommunication(serials[0].getName(), serials[0].getPortName(), 115200, 10);
         SerialCommunication com2 = new SerialCommunication(serials[1].getName(), serials[1].getPortName(), 115200, 10);
         serials[0].setComm(com1);

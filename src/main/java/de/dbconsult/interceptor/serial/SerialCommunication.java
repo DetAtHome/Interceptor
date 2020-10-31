@@ -9,6 +9,7 @@ public class SerialCommunication {
     int timeout;
     SerialPort comPort;
     boolean portOpen = false;
+    String lineFragment = new String();
 
     public SerialCommunication(String name, String portName, int baud, int timeout) {
         this.baud = baud;
@@ -16,19 +17,21 @@ public class SerialCommunication {
         this.name = name;
         this.timeout = timeout;
 
-        int portIndex = determineComPortIndex(portName);
-        if(portIndex<0) {
-            throw  new RuntimeException("Cannot determine port " + portName);
-        }
+        if(!name.startsWith("test")) {
+            int portIndex = determineComPortIndex(portName);
+            if (portIndex < 0) {
+                throw new RuntimeException("Cannot determine port " + portName);
+            }
 
-        comPort = SerialPort.getCommPorts()[portIndex];
-        comPort.setBaudRate(baud);
+            comPort = SerialPort.getCommPorts()[portIndex];
+            comPort.setBaudRate(baud);
 
-        portOpen = comPort.openPort(1,42,1024);
-        if (!portOpen) {
-            throw new RuntimeException("Could not open " + portName);
+            portOpen = comPort.openPort(1, 42, 1024);
+            if (!portOpen) {
+                throw new RuntimeException("Could not open " + portName);
+            }
+            comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, timeout, 0);
         }
-        comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, timeout, 0);
     }
 
     private int determineComPortIndex(String portName) {
@@ -63,6 +66,7 @@ public class SerialCommunication {
         }
         return data;
     }
+
 
     public void write(SerialData data) {
         if (data.getLen()>-1)

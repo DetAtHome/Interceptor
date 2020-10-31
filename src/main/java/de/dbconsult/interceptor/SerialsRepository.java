@@ -1,7 +1,6 @@
 package de.dbconsult.interceptor;
 
 import de.dbconsult.interceptor.serial.SerialCommunication;
-import de.dbconsult.interceptor.serial.TwoWaySerialComm;
 
 public class SerialsRepository {
     private static SerialsRepository instance;

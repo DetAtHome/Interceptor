@@ -15,14 +15,15 @@ public class Orchestrator {
         return instance;
     }
 
-    public synchronized void enqueueToWorkflow(SerialDescriptor from, byte[] raw, int rawLen) {
+    public synchronized void enqueueToWorkflow(long index, SerialDescriptor from, byte[] raw, int rawLen) {
+
         SerialDescriptor out;
         if (from.serialId == 1) {
             out = SerialsRepository.getInstance().getSerialById(2);
         } else {
             out = SerialsRepository.getInstance().getSerialById(1);
         }
-        WorkflowResult start = new WorkflowResult(from, out, raw, rawLen);
+        WorkflowResult start = new WorkflowResult(index, from, out, raw, rawLen);
 
         for (Workflow flow : WorkflowRepository.getInstance().getConfiguredWorkflows()) {
             start = flow.process(start);
@@ -31,6 +32,7 @@ public class Orchestrator {
         SerialData data = new SerialData();
         data.setData(start.getOutput());
         data.setLen(start.getLen());
-        start.getToDestination().getComm().write(data);
+        if(!from.getName().startsWith("test"))
+            start.getToDestination().getComm().write(data);
     }
 }

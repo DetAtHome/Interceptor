@@ -5,12 +5,18 @@ public class WorkflowResult {
     private SerialDescriptor toDestination;
     private byte[] output;
     private int len;
+    private long index;
 
-    public WorkflowResult(SerialDescriptor in, SerialDescriptor out, byte[] result, int len) {
+    public WorkflowResult(long index, SerialDescriptor in, SerialDescriptor out, byte[] result, int len) {
+        this.index = index;
         this.formSource = in;
         this.toDestination = out;
         this.output = result;
         this.len = len;
+    }
+
+    public long getIndex() {
+        return index;
     }
 
     public byte[] getOutput() {
