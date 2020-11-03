@@ -1,0 +1,3 @@
+de.dbconsult.interceptor.workflow.GUILogAndPass
+de.dbconsult.interceptor.workflow.MonitorSpindleSpeed
+de.dbconsult.interceptor.workflow.MonitorProbing

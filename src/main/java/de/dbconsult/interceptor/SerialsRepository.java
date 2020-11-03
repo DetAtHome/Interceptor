@@ -7,8 +7,10 @@ public class SerialsRepository {
 
     private SerialDescriptor mill;
     private SerialDescriptor pc;
+    private SerialDescriptor extra;
     private SerialCommunication millComm;
     private SerialCommunication pcComm;
+    private SerialCommunication extraComm;
 
     private SerialsRepository() {
 
@@ -25,14 +27,6 @@ public class SerialsRepository {
         return new SerialDescriptor(255,"ERROR", "dev0");
     }
 
-    public SerialCommunication getCommById(int id) {
-        if(id==1) {
-            return pcComm;
-        } else if(id==2) {
-            return millComm;
-        }
-        return null;
-    }
 
     public static SerialsRepository getInstance() {
         if (instance==null) instance = new SerialsRepository();
@@ -45,6 +39,14 @@ public class SerialsRepository {
 
     public void setMill(SerialDescriptor mill) {
         this.mill = mill;
+    }
+
+    public SerialDescriptor getExtra() {
+        return extra;
+    }
+
+    public void setExtra(SerialDescriptor extra) {
+        this.extra = extra;
     }
 
     public SerialDescriptor getPc() {
@@ -61,6 +63,14 @@ public class SerialsRepository {
 
     public SerialCommunication getPcComm() {
         return pcComm;
+    }
+
+    public SerialCommunication getExtraComm() {
+        return extraComm;
+    }
+
+    public void setExtraComm(SerialCommunication extraComm) {
+        this.extraComm = extraComm;
     }
 
     public void setPcComm(SerialCommunication pcComm) {

@@ -74,8 +74,8 @@ public class Interceptor {
     }
 
     private static SerialDescriptor[] parseArguments(String[] args) {
-        if (args==null || args.length<4 || args.length%2!=0) {
-            System.out.println("USAGE: ... serial1Name serial1Port serial2Name serial2Port");
+        if (args==null || args.length<6 || args.length%2!=0) {
+            System.out.println("USAGE: ... serialPCName serial1Port serialMillName serial2Port serialExtraName serial3Port");
             System.exit(-1);
         }
         SerialDescriptor[] result = new SerialDescriptor[args.length/2];
@@ -89,10 +89,13 @@ public class Interceptor {
     private static void setupSerials(SerialDescriptor[] serials) throws Exception {
         SerialCommunication com1 = new SerialCommunication(serials[0].getName(), serials[0].getPortName(), 115200, 10);
         SerialCommunication com2 = new SerialCommunication(serials[1].getName(), serials[1].getPortName(), 115200, 10);
+        SerialCommunication com3 = new SerialCommunication(serials[2].getName(), serials[2].getPortName(), 115200, 10);
         serials[0].setComm(com1);
         serials[1].setComm(com2);
+        serials[2].setComm(com3);
         SerialsRepository.getInstance().setPc(serials[0]);
         SerialsRepository.getInstance().setMill(serials[1]);
+        SerialsRepository.getInstance().setExtra(serials[2]);
 
     }
 

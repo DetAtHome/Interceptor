@@ -16,8 +16,9 @@ public class GUILogAndPass implements Workflow {
         mainFrame.setContentPane(new LogAndPassFrame().);*/
         String pc1 = SerialsRepository.getInstance().getPc().name;
         String mill = SerialsRepository.getInstance().getMill().name;
+        String extra = SerialsRepository.getInstance().getExtra().name;
 
-        logAndPass = new LogAndPassFrame(pc1,mill);
+        logAndPass = new LogAndPassFrame(pc1,mill, extra);
         logAndPass.show();
 
     }

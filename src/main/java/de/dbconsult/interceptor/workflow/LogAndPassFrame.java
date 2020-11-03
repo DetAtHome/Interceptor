@@ -32,9 +32,9 @@ public class LogAndPassFrame {
     DefaultTableModel stringTableModel;
     DefaultTableModel hexTableModel;
 
-    public LogAndPassFrame(String port1, String port2) {
-        stringTableModel = new DefaultTableModel(new String[]{"#", port2, port1}, 0);
-        hexTableModel = new DefaultTableModel(new String[]{"#", port2, port1}, 0);
+    public LogAndPassFrame(String port1, String port2, String port3) {
+        stringTableModel = new DefaultTableModel(new String[]{"#", port2, port1, port3}, 0);
+        hexTableModel = new DefaultTableModel(new String[]{"#", port2, port1, port3}, 0);
         $$$setupUI$$$();
         if (numOfOK.getText().isEmpty()) numOfOK.setText("0");
         if (numOfCR.getText().isEmpty()) numOfCR.setText("0");

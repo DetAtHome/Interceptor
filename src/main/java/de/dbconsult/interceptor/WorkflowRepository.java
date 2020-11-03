@@ -45,10 +45,10 @@ public class WorkflowRepository {
                     }.start();
                     GUILogAndPass guiLogAndPass = (GUILogAndPass) clazz.newInstance();
                     workflows.add(guiLogAndPass);
-                } else if(name.contains("MonitorSpindleSpeed")) {
-                    MonitorSpindleSpeed spindleSpeed = (MonitorSpindleSpeed) clazz.newInstance();
-                    spindleSpeed.customInit(new GPIOControllerImpl());
-                    workflows.add(spindleSpeed);
+//                } else if(name.contains("MonitorSpindleSpeed")) {
+//                    MonitorSpindleSpeed spindleSpeed = (MonitorSpindleSpeed) clazz.newInstance();
+//                    spindleSpeed.customInit(new GPIOControllerImpl());
+//                    workflows.add(spindleSpeed);
                 } else {
                     workflows.add((Workflow) clazz.newInstance());
                 }
