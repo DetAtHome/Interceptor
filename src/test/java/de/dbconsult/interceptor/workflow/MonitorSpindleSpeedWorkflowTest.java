@@ -3,31 +3,21 @@ package de.dbconsult.interceptor.workflow;
 import de.dbconsult.interceptor.SerialDescriptor;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
-import de.dbconsult.interceptor.gpio.GPIOController;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class MonitorSpindleSpeedTest {
+public class MonitorSpindleSpeedWorkflowTest {
 
-    MonitorSpindleSpeed spindleSpeed;
+    MonitorSpindleSpeedWorkflow spindleSpeed;
     double speedSet = -1;
     int interactions = 0;
 
     @Before
     public void setup() {
         interactions = 0;
-        spindleSpeed =  new MonitorSpindleSpeed();
-        spindleSpeed.customInit(new GPIOController() {
-
-            @Override
-            public void setPin(int pin, double val) {
-                interactions++;
-                speedSet = val;
-            }
-        });
+        spindleSpeed =  new MonitorSpindleSpeedWorkflow();
     }
 
     @Test

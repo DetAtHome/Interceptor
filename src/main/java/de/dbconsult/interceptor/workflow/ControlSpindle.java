@@ -2,6 +2,7 @@ package de.dbconsult.interceptor.workflow;
 
 import com.pi4j.io.gpio.*;
 import de.dbconsult.interceptor.Workflow;
+import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
 
 import java.util.StringTokenizer;
@@ -16,6 +17,12 @@ public class ControlSpindle implements Workflow {
             "DTR",                   // PIN FRIENDLY NAME (optional)
             PinPullResistance.PULL_DOWN); // PIN RESISTANCE (optional)
     double desiredSpindleSpeed=0;
+
+    @Override
+    public void initialize(WorkflowDataStore workflowDataStore) {
+
+    }
+
     @Override
     public synchronized WorkflowResult process(WorkflowResult data) {
         if (!data.getFormSource().getName().equalsIgnoreCase("pc")) {

@@ -10,10 +10,15 @@ import de.dbconsult.interceptor.serial.SerialData;
 import java.util.StringTokenizer;
 
 
-public class MonitorSpindleSpeed extends AbstractWorkflow implements Workflow {
+public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Workflow {
 
+    WorkflowDataStore workflowDataStore = null;
     double desiredSpindleSpeed=0;
 
+    @Override
+    public void initialize(WorkflowDataStore workflowDataStore) {
+        this.workflowDataStore = workflowDataStore;
+    }
 
     public synchronized WorkflowResult process(WorkflowResult data) {
 
@@ -43,16 +48,17 @@ public class MonitorSpindleSpeed extends AbstractWorkflow implements Workflow {
 
         if (message.contains("MSG")) return;
         if (message.contains("PRB")) return;
-        if (message.toLowerCase().contains("grbl")) return;
+        if (message.toLowerCase().contains("Grbl")) return;
         if (message.toLowerCase().contains("alarm")) {
            setSpindleSpeed(0);
-            return;
+           return;
         }
 
         if ((message.contains("[") && message.contains("]")) ||
                 (message.contains("<") && message.contains(">"))){
 
             int sIndex = message.indexOf("S");
+            if (sIndex<0) return;
             message = message.concat(" ");
             String param = message.substring(sIndex + 1).trim();
             StringTokenizer tokenizer = new StringTokenizer(param, "]\n\r ");
@@ -88,7 +94,8 @@ public class MonitorSpindleSpeed extends AbstractWorkflow implements Workflow {
 
     }
     private void setSpindleSpeed(double speed) {
-        SerialCommunication extra = SerialsRepository.getInstance().getExtra().getComm();
+        SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
+        SerialCommunication extra = serialsRepository.getExtra().getComm();
         SerialData data = new SerialData();
         int intSpeed = ((Double)speed).intValue();
         String strData = "s" + intSpeed + ";";

@@ -37,7 +37,6 @@ public abstract class AbstractWorkflow {
     protected boolean messageComplete(String message) {
         if(endsMessage(message)) {
             WorkflowDataStore.getInstance().update("continue", null);
-
         }
         if (WorkflowDataStore.getInstance().read("continue")==null) {
             return true;
@@ -48,6 +47,12 @@ public abstract class AbstractWorkflow {
     }
 
     protected boolean startsMessage(String message) {
+        if(message.equals("?")) return true;
+        if(message.startsWith("o")) return true;
+        if(message.startsWith("err")) return true;
+        if(message.startsWith("ALA")) return true;
+        if(message.contains("Grbl")) return true;
+        if(message.startsWith("$")) return true;
         if(message.contains("(")) return true;
         if(message.contains("[")) return true;
         if(message.contains("<")) return true;
@@ -55,6 +60,8 @@ public abstract class AbstractWorkflow {
     }
 
     protected boolean endsMessage(String message) {
+        if(message.equals("?")) return true;
+        if(message.contains("\n")) return true;
         if(message.contains(")")) return true;
         if(message.contains("]")) return true;
         if(message.contains(">")) return true;

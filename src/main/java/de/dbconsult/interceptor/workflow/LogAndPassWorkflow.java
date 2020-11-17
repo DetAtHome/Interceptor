@@ -1,10 +1,15 @@
 package de.dbconsult.interceptor.workflow;
 
 import de.dbconsult.interceptor.Workflow;
+import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
 
 public class LogAndPassWorkflow implements Workflow {
 
+    @Override
+    public void initialize(WorkflowDataStore workflowDataStore) {
+
+    }
 
     @Override
     public synchronized WorkflowResult process(WorkflowResult data) {

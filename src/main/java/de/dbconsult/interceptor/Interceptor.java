@@ -11,6 +11,10 @@ public class Interceptor {
     private static final long DELAY=200;
     private static boolean tooggle = false;
     private static boolean dtrChange = false;
+    static Orchestrator orchestrator = null;
+    private static SerialsRepository serialsRepository = new SerialsRepository();
+    private static WorkflowDataStore workflowDataStore =  WorkflowDataStore.getInstance();
+    private static WorkflowRepository workflowRepository = new WorkflowRepository(workflowDataStore);
 
     public static void main(String[] args) {
 
@@ -21,25 +25,24 @@ public class Interceptor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        workflowDataStore.update("SerialsRepository", serialsRepository);
         System.out.println("Configured workflow chain: ");
-        for(Workflow workflow:WorkflowRepository.getInstance().getConfiguredWorkflows()) {
-            System.out.println(workflow.getClass().getName());
+
+        try {
+            for (Workflow workflow : workflowRepository.getConfiguredWorkflows()) {
+                System.out.println(workflow.getClass().getName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        workflowDataStore.update("WorkflowRepository", workflowRepository);
+
+        orchestrator = new Orchestrator(serialsRepository, workflowRepository);
         counter = 0;
         while(true) {
             counter++;
-/*            SerialData request = SerialsRepository.getInstance().getPc().getComm().readFully();
-            StringTokenizer commandTokenizer = new StringTokenizer(request.getAsString(),"\r\n");
-            while (commandTokenizer.hasMoreTokens()) {
-                if(request.getLen()>0) {
-                    byte[] data = (commandTokenizer.nextToken() + "\r").getBytes();
-                    Orchestrator.getInstance().enqueueToWorkflow(serials[0], data, data.length);
-                    SerialData response = SerialsRepository.getInstance().getMill().getComm().readFully();
-                    if(response.getLen()>0)
-                        Orchestrator.getInstance().enqueueToWorkflow(serials[1], response.getData(), response.getLen());
-                }
-            }
-*/            // get from 1
+
+            // get from 1
             SerialData request = new SerialData();
             SerialData response = new SerialData();
             if(args[0].startsWith("test")) {
@@ -49,12 +52,12 @@ public class Interceptor {
                  request.setLen(request.getData().length);
                  while(System.currentTimeMillis() - time <DELAY) {}
             } else {
-                request = SerialsRepository.getInstance().getPc().getComm().readFully();
+                request = serialsRepository.getPc().getComm().readFully();
             }
 
             // enqueue
             if (request != null && request.getLen() > 0)
-                Orchestrator.getInstance().enqueueToWorkflow(counter, serials[0], request.getData(), request.getLen());
+                orchestrator.enqueueToWorkflow(counter, serials[0], request.getData(), request.getLen());
             // get from 2
             if(args[2].startsWith("test")) {
                 time = System.currentTimeMillis();
@@ -64,11 +67,11 @@ public class Interceptor {
                 while(System.currentTimeMillis() - time <DELAY) {}
 
             } else {
-                response = SerialsRepository.getInstance().getMill().getComm().readFully();
+                response = serialsRepository.getMill().getComm().readFully();
             }
             // enqueue
             if (response != null && response.getLen() > 0)
-                Orchestrator.getInstance().enqueueToWorkflow(counter, serials[1], response.getData(), response.getLen());
+                orchestrator.enqueueToWorkflow(counter, serials[1], response.getData(), response.getLen());
 
         }
     }
@@ -93,9 +96,9 @@ public class Interceptor {
         serials[0].setComm(com1);
         serials[1].setComm(com2);
         serials[2].setComm(com3);
-        SerialsRepository.getInstance().setPc(serials[0]);
-        SerialsRepository.getInstance().setMill(serials[1]);
-        SerialsRepository.getInstance().setExtra(serials[2]);
+        serialsRepository.setPc(serials[0]);
+        serialsRepository.setMill(serials[1]);
+        serialsRepository.setExtra(serials[2]);
 
     }
 

@@ -73,7 +73,7 @@ public class TwoWaySerialComm {
 //                    }
 //                }
                 while( ( len = this.in.read( buffer,0,1024 ) ) > -1 ) {
-                    Orchestrator.getInstance().enqueueToWorkflow(1,me, buffer, len);
+//                    Orchestrator.getInstance().enqueueToWorkflow(1,me, buffer, len);
                 }
 
             } catch( IOException e ) {

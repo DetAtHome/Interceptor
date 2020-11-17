@@ -1,3 +1,4 @@
-de.dbconsult.interceptor.workflow.GUILogAndPass
-de.dbconsult.interceptor.workflow.MonitorSpindleSpeed
-de.dbconsult.interceptor.workflow.MonitorProbing
+#de.dbconsult.interceptor.workflow.GatherFullLineWorkflow
+de.dbconsult.interceptor.workflow.GUILogAndPassWorkflow
+de.dbconsult.interceptor.workflow.MonitorSpindleSpeedWorkflow
+de.dbconsult.interceptor.workflow.MonitorProbingWorkflow
