@@ -52,18 +52,36 @@ public class SerialCommunication {
             System.out.println(port.getDescriptivePortName());
         }
     }
+
     public SerialData readFully() {
-        byte[] readBuffer = new byte[1024];
-        int numRead = comPort.readBytes(readBuffer, readBuffer.length);
+        byte readBuffer[] = new byte[1024];
+        byte read[] = new byte[1];
+        int index =0;
+        int numRead = comPort.readBytes(read, 1);
         SerialData data = new SerialData();
-        if (numRead > 0) {
-            data.setData(readBuffer);
-            data.setLen(numRead);
-            data.setAsString(new String(readBuffer, 0, numRead));
-        } else {
-            data.setLen(-1);
-            data.setAsString("Nothing");
+        if (numRead>0) {
+            if (read[0] == 24 ||read[0] == '?' || read[0] == '!' || read[0] == '~') {
+                // shortcut for push messages
+                data.setData(read);
+                data.setLen(numRead);
+                data.setAsString(new String(read, 0, numRead));
+                return data;
+            }
         }
+       while (numRead>0) {
+            readBuffer[index] = read[0];
+            index++;
+            // continue reading
+            if (read[0] == 13) {
+                break;
+            }
+            else {
+                numRead = comPort.readBytes(read, 1);
+            }
+        }
+        data.setData(readBuffer);
+        data.setLen(index);
+        data.setAsString(new String(readBuffer, 0, index));
         return data;
     }
 

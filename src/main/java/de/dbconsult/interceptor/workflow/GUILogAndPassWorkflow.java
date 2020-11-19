@@ -53,6 +53,10 @@ public class GUILogAndPassWorkflow  extends AbstractWorkflow implements Workflow
                 setDoLog(false);
             }
         }
+
+
+
+
         String message = new String(data.getOutput());
         if (data.getFormSource().getName().contains("mill")) {
             if(isG0RequestPending()) {
