@@ -4,10 +4,11 @@ import de.dbconsult.interceptor.SerialsRepository;
 import de.dbconsult.interceptor.Workflow;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
+import de.dbconsult.interceptor.internal.UIController;
 
 import javax.swing.*;
 
-public class GUILogAndPassWorkflow  extends AbstractWorkflow implements Workflow {
+public class GUILogAndPassWorkflow  extends AbstractWorkflow {
 
     LogAndPassFrame logAndPass;
     private boolean questionRequestPending = false;
@@ -24,13 +25,14 @@ public class GUILogAndPassWorkflow  extends AbstractWorkflow implements Workflow
     @Override
     public void initialize(WorkflowDataStore workflowDataStore) {
         this.workflowDataStore = workflowDataStore;
+        UIController controller = new UIController(workflowDataStore);
         String pc1 = "mill"; //(String) data[0]; //serialsRepository.getInstance().getPc().name;
         String mill = "pc"; //(String) data[1]; //SerialsRepository.getInstance().getMill().name;
         String extra = "extra"; // (String) data[2]; //SerialsRepository.getInstance().getExtra().name;
 
-        logAndPass = new LogAndPassFrame(pc1,mill, extra);
+        logAndPass = new LogAndPassFrame(pc1,mill, extra, workflowDataStore, controller);
         logAndPass.show();
-
+        workflowDataStore.update("UIInstance", logAndPass);
     }
 
     @Override
@@ -54,54 +56,33 @@ public class GUILogAndPassWorkflow  extends AbstractWorkflow implements Workflow
             }
         }
 
+        logAndPass.showPCQSize((long)workflowDataStore.read("pcQSize"));
+        logAndPass.showMillQSize((long)workflowDataStore.read("millQSize"));
 
 
 
         String message = new String(data.getOutput());
         if (data.getFormSource().getName().contains("mill")) {
+            if(data.getLen()==1 && data.getOutput()[0]==10) {
+                setDoLog(false);
+            }
             if(isG0RequestPending()) {
                 setDoLog(false);
-                if (messageComplete(message)) {
-                    if(message.contains("]")) {
-                        clearG0RequestPending();
-                    } else {
-           //             logAndPass.addData(data);
-                    }
+                if(message.contains("]")) {
+                    clearG0RequestPending();
                 }
             }
             if(isQuestionRequestPending()) {
                 setDoLog(false);
-                if (messageComplete(message)) {
-                    if(message.contains(">")) {
-                        clearQuestionRequestPending();
-                    } else {
-            //            logAndPass.addData(data);
-                    }
+                if(message.contains(">")) {
+                    clearQuestionRequestPending();
                 }
             }
         }
         if (isDoLog()) logAndPass.addData(data);
         setDoLog(true);
-
-        byte[] cmd = data.getOutput();
-        if(data.getFormSource().getName().contains("pc")) {
-            int commandsFound = 0;
-            for (int i = 0; i < data.getLen(); i++) {
-                if (cmd[i] == 13) commandsFound++;
-            }
-            logAndPass.incrementCmd(commandsFound);
-        } else {
-            int oksFound = 0;
-            String dataString = new String(data.getOutput());
-            String a[] = dataString.split(" ");
-            for (int i = 0; i < a.length; i++)
-            {
-                if ((a[i]).contains("ok")) oksFound++;
-            }
-
-            logAndPass.incrementOk(oksFound);
-
-        }
+        logAndPass.showAbsCmdNumber(workflowDataStore.getCommandFound());
+        logAndPass.showAbsOkNumber(workflowDataStore.getOkFound());
         return data;
     }
 

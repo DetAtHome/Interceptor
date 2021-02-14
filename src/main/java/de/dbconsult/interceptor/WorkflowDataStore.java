@@ -7,6 +7,9 @@ public class WorkflowDataStore {
     private HashMap<String, Object> dataStore = new HashMap<String, Object>();
     private static WorkflowDataStore instance;
 
+    private long okFound = 0;
+    private long commandFound =0;
+
     private WorkflowDataStore() {
     }
 
@@ -18,7 +21,7 @@ public class WorkflowDataStore {
     }
 
     public void reset() {
-        instance=null;
+        dataStore.clear();
     }
 
     public boolean update(String idx, Object data) {
@@ -34,4 +37,29 @@ public class WorkflowDataStore {
         if (!dataStore.containsKey(key)) return null;
         return dataStore.get(key);
     }
+
+    public long getCommandFound() {
+        return commandFound;
+    }
+
+    public long getOkFound() {
+        return okFound;
+    }
+
+    public void setCommandFound(long commandFound) {
+        this.commandFound = commandFound;
+    }
+
+    public void setOkFound(long okFound) {
+        this.okFound = okFound;
+    }
+
+    public void incCommandFound() {
+        this.commandFound++;
+    }
+
+    public void incOkFound() {
+        this.okFound++;
+    }
+
 }

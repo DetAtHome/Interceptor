@@ -1,18 +1,17 @@
 package de.dbconsult.interceptor.workflow;
 
-import de.dbconsult.interceptor.SerialsRepository;
-import de.dbconsult.interceptor.Workflow;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
-import de.dbconsult.interceptor.serial.SerialCommunication;
-import de.dbconsult.interceptor.serial.SerialData;
+import de.dbconsult.interceptor.internal.AdditionalCommunicator;
 
-public class MonitorProbingWorkflow extends AbstractWorkflow implements Workflow {
+public class MonitorProbingWorkflow extends AbstractWorkflow {
 
     private WorkflowDataStore workflowDataStore = null;
+    private AdditionalCommunicator additionalCommunicator = null;
     @Override
     public void initialize(WorkflowDataStore workflowDataStore) {
         this.workflowDataStore = workflowDataStore;
+        additionalCommunicator = new AdditionalCommunicator(workflowDataStore);
         workflowDataStore.update("ProbeInProgress", false);
         workflowDataStore.update("probeAnswerCount", 0);
 
@@ -22,37 +21,46 @@ public class MonitorProbingWorkflow extends AbstractWorkflow implements Workflow
     public synchronized WorkflowResult process(WorkflowResult data) {
         String message;
         message = new String(data.getOutput(), 0, data.getLen());
-        if(toBeContinued(message)) {
-            storeMessageFragment(message);
-        }
+        message = filterComments(message);
 
-        if(messageComplete(message)) {
-            String fromBuffer = getMessageFragment();
-            if (fromBuffer != null) {
-                message = fromBuffer;
-
-            }
-            clearMessageFragment();
-            message = filterComments(message);
-        }
-        if (data.getFormSource().getName().toLowerCase().contains("mill")) {
+        if (isMill(data)) {
             // switch probing off when getting probe result
-            if (message.contains("PRB") && (boolean) workflowDataStore.read("ProbeInProgress")) {
+            if (message.contains("[PRB") && (boolean) workflowDataStore.read("ProbeInProgress")) {
                 int probeAnswers = (int)workflowDataStore.read("probeAnswerCount");
                 System.out.println("Reducing probe answers from " + probeAnswers);
                 probeAnswers--;
                 workflowDataStore.update("probeAnswerCount", probeAnswers);
                 if (probeAnswers==0) {
                     System.out.println("Switching off");
-                    switchProbingOff();
+                    additionalCommunicator.switchProbingOff();
                     workflowDataStore.update("ProbeInProgress", false);
                     workflowDataStore.update("probeAnswerCount",0);
                 }
             }
         } else {
+            if (message.toUpperCase().startsWith("PROBERESET")) {
+                workflowDataStore.update("ProbeInProgress", false);
+                workflowDataStore.update("probeAnswerCount",0);
+                additionalCommunicator.switchProbingOff();
+                data.setOutput("()\n".getBytes());
+                data.setLen("()\n".length());
+            }
+            if (message.toUpperCase().startsWith("PROBEON")) {
+                additionalCommunicator.switchProbingOn();
+                data.setOutput("()\n".getBytes());
+                data.setLen("()\n".length());
+//                data.setToDestination(new SerialDescriptor(0,"ABORT","dummy"));
+            }
+            if (message.toUpperCase().startsWith("PROBEOFF")) {
+                additionalCommunicator.switchProbingOff();
+                data.setOutput("()\n".getBytes());
+                data.setLen("()\n".length());
+//                data.setToDestination(new SerialDescriptor(0,"ABORT","dummy"));
+            }
+
             if (message.contains("G38.")) {
                 workflowDataStore.update("ProbeInProgress", true);
-                switchProbingOn();
+                additionalCommunicator.switchProbingOn();
                 int currentProbeRequests = countProbeRequests(message);
                 int pendingProbeRequests = workflowDataStore.read("probeAnswerCount")==null?0:(int)workflowDataStore.read("probeAnswerCount");
                 workflowDataStore.update("probeAnswerCount",(currentProbeRequests + pendingProbeRequests));
@@ -68,21 +76,5 @@ public class MonitorProbingWorkflow extends AbstractWorkflow implements Workflow
         return count;
     }
 
-    private void switchProbingOff() {
-        switchProbing("p0;");
-    }
 
-    private void switchProbingOn() {
-        switchProbing("p1;");
-    }
-
-    private void switchProbing(String onOff) {
-        SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
-        SerialCommunication extra = serialsRepository.getExtra().getComm();
-        SerialData data = new SerialData();
-        data.setLen(onOff.length());
-        data.setData(onOff.getBytes());
-        data.setAsString(onOff);
-        extra.write(data);
-    }
 }

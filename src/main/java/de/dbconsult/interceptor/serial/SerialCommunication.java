@@ -1,6 +1,7 @@
 package de.dbconsult.interceptor.serial;
 
 import com.fazecast.jSerialComm.SerialPort;
+import de.dbconsult.interceptor.WorkflowResult;
 
 public class SerialCommunication {
 
@@ -53,22 +54,21 @@ public class SerialCommunication {
         }
     }
 
-    public SerialData readFully() {
+    public WorkflowResult readFully() {
         byte readBuffer[] = new byte[1024];
         byte read[] = new byte[1];
         int index =0;
         int numRead = comPort.readBytes(read, 1);
-        SerialData data = new SerialData();
+        WorkflowResult data = new WorkflowResult(0,null, null, "".getBytes(),0);
         if (numRead>0) {
             if (read[0] == 24 ||read[0] == '?' || read[0] == '!' || read[0] == '~') {
                 // shortcut for push messages
-                data.setData(read);
+                data.setOutput(read);
                 data.setLen(numRead);
-                data.setAsString(new String(read, 0, numRead));
                 return data;
             }
         }
-       while (numRead>0) {
+        while (numRead>0) {
             readBuffer[index] = read[0];
             index++;
             // continue reading
@@ -79,15 +79,27 @@ public class SerialCommunication {
                 numRead = comPort.readBytes(read, 1);
             }
         }
-        data.setData(readBuffer);
+        data.setOutput(readBuffer);
         data.setLen(index);
-        data.setAsString(new String(readBuffer, 0, index));
         return data;
     }
 
 
-    public void write(SerialData data) {
-        if (data.getLen()>-1)
-            comPort.writeBytes(data.getData(),data.getLen());
+    public void write(WorkflowResult data) {
+        if (data.getLen()>-1) {
+            if (comPort.writeBytes(data.getOutput(), data.getLen()) < 0) {
+                System.out.println("Error while writing");
+                System.out.println("Comport> " + comPort.getSystemPortName());
+            }
+        }
+    }
+
+    public void write(String data) {
+        if (data.length()>0) {
+            if (comPort.writeBytes(data.getBytes(),data.length()) < 0) {
+                System.out.println("Error while writing");
+                System.out.println("Comport> " + comPort.getSystemPortName());
+            }
+        }
     }
 }

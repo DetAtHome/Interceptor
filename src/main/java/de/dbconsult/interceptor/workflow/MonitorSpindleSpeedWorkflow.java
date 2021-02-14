@@ -1,11 +1,9 @@
 package de.dbconsult.interceptor.workflow;
 
-import de.dbconsult.interceptor.SerialsRepository;
 import de.dbconsult.interceptor.Workflow;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
-import de.dbconsult.interceptor.serial.SerialCommunication;
-import de.dbconsult.interceptor.serial.SerialData;
+import de.dbconsult.interceptor.internal.AdditionalCommunicator;
 
 import java.util.StringTokenizer;
 
@@ -13,11 +11,14 @@ import java.util.StringTokenizer;
 public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Workflow {
 
     WorkflowDataStore workflowDataStore = null;
+    AdditionalCommunicator additionalCommunicator = null;
     double desiredSpindleSpeed=0;
 
     @Override
     public void initialize(WorkflowDataStore workflowDataStore) {
+
         this.workflowDataStore = workflowDataStore;
+        additionalCommunicator = new AdditionalCommunicator(workflowDataStore);
     }
 
     public synchronized WorkflowResult process(WorkflowResult data) {
@@ -26,33 +27,20 @@ public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Wor
 
         String message;
         message = new String(data.getOutput(), 0, data.getLen());
-        if(toBeContinued(message)) {
-            storeMessageFragment(message);
+        if (message.contains("[MSG")) return data;
+        if (message.contains("[PRB")) return data;
+        if (message.contains("Grbl")) return data;
+        if (message.toLowerCase().contains("alarm")) {
+            additionalCommunicator.setSpindleSpeed(0);
+            return data;
         }
-
-        if(messageComplete(message)) {
-            String fromBuffer = getMessageFragment();
-            if(fromBuffer!=null) {
-                message=fromBuffer;
-
-            }
-            clearMessageFragment();
-            message = filterComments(message);
-            determineSpindleSpeed(message);
-        }
+        determineSpindleSpeed(message);
         return data;
     }
 
 
     private void determineSpindleSpeed(String message) {
 
-        if (message.contains("MSG")) return;
-        if (message.contains("PRB")) return;
-        if (message.toLowerCase().contains("Grbl")) return;
-        if (message.toLowerCase().contains("alarm")) {
-           setSpindleSpeed(0);
-           return;
-        }
 
         if ((message.contains("[") && message.contains("]")) ||
                 (message.contains("<") && message.contains(">"))){
@@ -80,11 +68,12 @@ public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Wor
                 if(message.contains("M3")) {
                     Object speedModified = WorkflowDataStore.getInstance().read("speedModified");
                     if("true".equals(speedModified)) {
-                        setSpindleSpeed((Double)WorkflowDataStore.getInstance().read("SpindleSpeed"));
+                        additionalCommunicator.setSpindleSpeed((Double)WorkflowDataStore.getInstance().read("SpindleSpeed"));
                         WorkflowDataStore.getInstance().update("speedModified","false");
                     }
                 } else if(message.contains("M5")) {
-                    setSpindleSpeed(0);
+                    additionalCommunicator.setSpindleSpeed(0);
+                    WorkflowDataStore.getInstance().update("speedModified","true");
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
@@ -93,15 +82,5 @@ public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Wor
         }
 
     }
-    private void setSpindleSpeed(double speed) {
-        SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
-        SerialCommunication extra = serialsRepository.getExtra().getComm();
-        SerialData data = new SerialData();
-        int intSpeed = ((Double)speed).intValue();
-        String strData = "s" + intSpeed + ";";
-        data.setLen(strData.length());
-        data.setData(strData.getBytes());
-        data.setAsString(strData);
-        extra.write(data);
-    }
+
 }

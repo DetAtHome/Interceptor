@@ -15,7 +15,7 @@ public class StoreToQueue implements Workflow {
     @Override
     public synchronized WorkflowResult process(WorkflowResult data) {
         if(!new String(data.getOutput()).contains("\r")) return data;
-        if(data.getLen()>0) InternalQueue.getInstance().enqueue(data);
+     //   if(data.getLen()>0) InternalQueue.getInstance().enqueue(data);
         return data;
     }
 }

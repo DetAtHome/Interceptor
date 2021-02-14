@@ -15,7 +15,7 @@ public class ExecuteAfter implements Workflow {
     public synchronized WorkflowResult process(WorkflowResult data) {
         if(!data.getFormSource().getName().equalsIgnoreCase("pc")) return data;
         if(new String(data.getOutput()).contains("ok")) {
-            InternalQueue.getInstance().dequeue();
+         //   InternalQueue.getInstance().dequeue();
         }
         return data;
     }
