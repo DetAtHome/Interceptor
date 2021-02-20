@@ -1,8 +1,14 @@
 package de.dbconsult.interceptor.exactposition;
 
 import de.dbconsult.interceptor.WorkflowDataStore;
+import de.dbconsult.interceptor.exactheight.FileParser;
+import de.dbconsult.interceptor.exactheight.FileReader;
+import de.dbconsult.interceptor.exactheight.FileWriter;
 import javafx.geometry.Point2D;
+import javafx.scene.transform.Rotate;
 
+import java.io.File;
+import java.util.Locale;
 import java.util.Vector;
 
 import static java.lang.Math.abs;
@@ -12,11 +18,17 @@ public class EdgeMonitor extends Thread {
     WorkflowDataStore workflowDataStore;
     HeightSensor heightSensor;
     Vector<Double> workpieceOffset = new Vector<>();
+    File inputFile;
+    private FileParser fileParser;
+    private FileWriter fileWriter;
 
     public EdgeMonitor(WorkflowDataStore workflowDataStore) {
         this.workflowDataStore = workflowDataStore;
         heightSensor = new HeightSensor(workflowDataStore);
+        inputFile = (File) workflowDataStore.read("RotationFileDirectory");
         workflowDataStore.update("EdgeFindInProgress", true);
+        fileParser = new FileParser(workflowDataStore);
+        fileWriter = new FileWriter(inputFile.getPath(), "_rotate");
     }
 
 
@@ -30,9 +42,8 @@ public class EdgeMonitor extends Thread {
             Thread.sleep(100);
             Vector<Double> distancesFromEdges = findWorkpieceHome();
             Double angle = findAngle();
-            System.out.println(angle);
-            System.out.println(workflowDataStore.read("CurrentWorkpieceAngle"));
-
+//            System.out.println(workflowDataStore.read("CurrentWorkpieceAngle"));
+            rotateFile();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -91,23 +102,49 @@ public class EdgeMonitor extends Thread {
 
         Point2D baseLine = new Point2D(origin.getX()+20d, yBorder);
         Point2D angledLine = new Point2D(origin.getX()+20d, yBorderForAngle);
-      //  heightSensor.moveToWorkOrigin();
-      //  heightSensor.resetWorkOriginToBorderPlusOffset("Y", yBorder,workpieceOffset.get(1));
 
         Double angle = getAngle(origin, baseLine, angledLine);
         Vector<Double> result = new Vector();
-//        result.add(xBorder);
-//        result.add(yBorder);
-//        result.add(angle);
+
         heightSensor.cleanUp(angle);
         return angle;
-        // position back to workstart
-//        heightSensor.findHeightChange("Y");
-        // position tox + 2cm
-//        heightSensor.findHeightChange("Y");
 
     }
 
+    private void rotateFile() {
+        FileReader reader = new FileReader(inputFile);
+        String line;
+        Rotate rotate = new Rotate((Double)workflowDataStore.read("CurrentWorkpieceAngle"));
+        try {
+            do {
+                line = reader.line();
+
+                if(line==null) break;
+                if(line.startsWith("(")) {
+                    fileWriter.writeLine(line);
+                    continue;
+                }
+                Vector<Double> originalPointCoords = fileParser.parseLine(line);
+                if(originalPointCoords==null) {
+                    fileWriter.writeLine(line);
+                    continue;
+                }
+                Point2D newDestination = rotate.transform(originalPointCoords.get(0),originalPointCoords.get(1));
+                String originalXAsString = String.format(Locale.ENGLISH,"%.4f", originalPointCoords.get(0));
+                String originalYAsString = String.format(Locale.ENGLISH,"%.4f", originalPointCoords.get(1));
+                String newXAsString = String.format(Locale.ENGLISH,"%.4f", newDestination.getX());
+                String newYAsString = String.format(Locale.ENGLISH,"%.4f", newDestination.getY());
+
+                line = line.replaceAll(originalXAsString, newXAsString);
+                line = line.replaceAll(originalYAsString, newYAsString);
+
+                fileWriter.writeLine(line);
+            } while (line!=null);
+            fileWriter.close();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
     private Double getAngle(Point2D origin, Point2D bottomLeft, Point2D bottomForAngle) {
         return origin.angle(bottomForAngle, bottomLeft);
     //    return Math.toDegrees(atan2(bottomForAngle.getY(),bottomForAngle.getX()) - atan2(bottomLeft.getY(),bottomLeft.getX()));

@@ -23,7 +23,7 @@ public class MaskZMainController extends Thread {
         this.downMarker = downMarker;
         workflowDataStore.update("MaskDownMarker", downMarker);
         fileParser = new FileParser(workflowDataStore);
-        fileWriter = new FileWriter(inputFile.getPath(), originalFileName);
+        fileWriter = new FileWriter(inputFile.getPath(), "_adjust");
     }
 
 

@@ -9,8 +9,8 @@ public class FileWriter {
     File outFile;
     BufferedWriter bufferedWriter;
 
-    public FileWriter(String path, String fileName) {
-        String outFilename = path.substring(0,path.lastIndexOf(".")) + "_adjust.nc";
+    public FileWriter(String path, String newPostfix) {
+        String outFilename = path.substring(0,path.lastIndexOf(".")) + newPostfix + ".nc";
         outFile = new File(outFilename);
         System.out.println(outFilename);
         try {

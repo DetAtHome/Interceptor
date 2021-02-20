@@ -32,7 +32,7 @@ public class FileParser {
         return line.startsWith(downMarker);
     }
 
-    private Vector<Double> parseLine(String line) {
+    public Vector<Double> parseLine(String line) {
         if((line.indexOf("X")<0) || (line.indexOf("Y")<0)) return null;
         String[] lines = line.toLowerCase().split(" ");
 
