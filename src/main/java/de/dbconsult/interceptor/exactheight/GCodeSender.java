@@ -17,6 +17,37 @@ public class GCodeSender {
         this.workflowDataStore = workflowDataStore;
     }
 
+    public Double queryMachineCoord(String coord) {
+        String allData = queryMachineState();
+        String[] mposCoords = allData.substring(allData.indexOf("MPos:")+5).split("[,|]");
+        try {
+            switch (coord) {
+                case "X":
+                    return Double.parseDouble(mposCoords[0]);
+                case "Y":
+                    return Double.parseDouble(mposCoords[1]);
+                case "Z":
+                    return Double.parseDouble(mposCoords[2]);
+            }
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+        }
+        return -1d;
+    }
+
+    public String queryMachineState() {
+        getCommDescription().write("?");
+        return blockUntil("<");
+
+    }
+
+    public void blockUntilIdle() {
+        String answer;
+        do {
+           answer = queryMachineState();
+        } while (!(answer.toLowerCase().contains("idle"))||(answer.toLowerCase().contains("error")));
+    }
+
     public Double initialzeZHome() {
         // remove arbitrary junk from serial
         String junk = new String(getCommDescription().readFully().getOutput());
@@ -49,11 +80,40 @@ public class GCodeSender {
         return HeightComputing.parseProbeAnswer(sendProbeCommand());
     }
 
+    public void resetWorkXYCoords() {
+        getCommDescription().write("G92X0Y0\n");
+        blockUntilOK();
+    }
+    public void moveToOrigin() {
+        getCommDescription().write("G90G21G0X0Y0\n");
+        blockUntilOK();
+    }
+
+    public void jogLittleUp() {
+        jog("Z",2d);
+    }
     public void moveToXYCoords(Vector<Double> point) {
 
-        String command = String.format(String.format(Locale.US, "G0 X%1$.4f Y%2$.4f\n", point.elementAt(0),point.elementAt(1)));
+//        String command = String.format(String.format(Locale.US, "G0 X%f$.4f Y%f$.4f\n", point.elementAt(0),point.elementAt(1)));
+//        getCommDescription().write(command);
+//        blockUntilOK();
+        jog("X", point.elementAt(0));
+        jog("Y",point.elementAt(1));
+     }
+
+    public void jog(String axis, Double distance) {
+        String command = String.format(String.format(Locale.US,"$J=G21G91%s%fF2000\n", axis, distance));
         getCommDescription().write(command);
+
         blockUntilOK();
+
+    }
+     public void miniJog(String axis) {
+         String command = String.format(String.format(Locale.US,"$J=G21G91%s-0.01F2000\n", axis));
+         getCommDescription().write(command);
+
+         blockUntilOK();
+
      }
 
      public void eject() {
@@ -94,8 +154,8 @@ public class GCodeSender {
     private String blockUntil(String semaphore) {
         SerialCommunication mill = getCommDescription();
         String answer = "";
-        while(!answer.toLowerCase().contains(semaphore)) {
-            WorkflowResult result =mill.readFully();
+        while(!answer.toLowerCase().contains(semaphore.toLowerCase())) {
+            WorkflowResult result = mill.readFully();
             answer = new String(result.getOutput(),0,result.getLen());
             if (answer.toLowerCase().contains("alarm") || answer.toLowerCase().contains("error"))
                 throw new RuntimeException("Unexpected machining error or alarm: " + answer);

@@ -4,13 +4,15 @@ boolean fullyRead=false;
 int i;
 char read;
 boolean probeState=false;
-
+char buf[15];
 Servo probeServo;
 
 void setup() {
   Serial.begin(115200);
   pinMode(A0,INPUT);
+  pinMode(A7,INPUT);
   pinMode(11,OUTPUT);
+  pinMode(10,INPUT);
   pinMode(A3,OUTPUT);
   probeServo.attach(A3);  
   probeServo.write(120);
@@ -34,8 +36,7 @@ void loop() {
      if(i>31) i=0;
   }
   if (fullyRead) { 
-    Serial.print("Read> ");
-    Serial.println(string);
+
     i=0;
     char command = string[0];
     char* ptrParam = & string[1];
@@ -83,9 +84,23 @@ void loop() {
           }
         }        
         break;
-      
+      case 'h':
+ /*       long val = analogRead(A7);
+        val = val + 10000;
+        ultoa(val,buf,10);
+        buf[0]='h';
+        buf[5]=0;
+        Serial.println(buf);
+        */
+        if(digitalRead(10)==HIGH) {
+          Serial.println("h0020");
+        } else {
+          Serial.println("h0001");
+        }
+        break;
+
     }
-    
+
     fullyRead=false;
     for(int j=0;j<32;j++) { string[j]= 0; }
   }

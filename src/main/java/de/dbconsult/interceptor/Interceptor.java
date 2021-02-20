@@ -56,6 +56,7 @@ public class Interceptor {
         counter = 0;
         while (true) {
             if (workflowDataStore.read("ZMaskInProgress")!=null) continue;
+            if (workflowDataStore.read("EdgeFindInProgress")!=null) continue;
             counter++;
             deviationActive = ((boolean)workflowDataStore.read("deviationActive"));
 
