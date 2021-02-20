@@ -84,6 +84,7 @@ public class GCodeSender {
         getCommDescription().write("G92X0Y0\n");
         blockUntilOK();
     }
+
     public void moveToOrigin() {
         getCommDescription().write("G90G21G0X0Y0\n");
         blockUntilOK();

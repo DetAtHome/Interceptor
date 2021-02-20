@@ -29,16 +29,13 @@ public class HeightSensor {
         Vector<Double> homeInMachine = new Vector<>();
         homeInMachine.add(0, machineOriginX);
         homeInMachine.add(1, machineOriginY);
-    //    sender.resetWorkXYCoords();
         return homeInMachine;
 
     }
 
-    public void cleanUp(Vector<Double> result) {
-        workflowDataStore.update("CurrentWorkpieceAngle",result.get(2));
-        sender.jogLittleUp();
-        sender.blockUntilIdle();
-        sender.moveToOrigin();
+    public void cleanUp(Double result) {
+        workflowDataStore.update("CurrentWorkpieceAngle",result);
+        moveToOrigin();
     }
 
     public void setOrigin() {
@@ -46,45 +43,13 @@ public class HeightSensor {
         sender.resetWorkXYCoords();
     }
 
-    public Double resetWorkOriginToBorderPlusOffset(String axis, Double border, Double offset) {
+    public void moveToOrigin() {
         sender.jogLittleUp();
-        Double qMachineOrigin = 0d;
-        Double qBorder = border;
-        Double qOffset = offset;
-        if ("X".equals(axis)) {
-            qMachineOrigin = machineOriginX;
-        } else {
-            qMachineOrigin = machineOriginY;
-        }
-        Double qDistanceToBorder = abs(qMachineOrigin - qBorder);
-        if (qMachineOrigin<qBorder) qDistanceToBorder = qDistanceToBorder *-1;
+        sender.blockUntilIdle();
+        sender.moveToOrigin();
 
-        Vector<Double> origin = new Vector<>();
-     //   origin.add(0,machineOriginX + xOffset - xDistanceToBorder);
-        if ("X".equals(axis)) {
-            origin.add(0, qOffset);
-            origin.add(1, 0d);
-        } else {
-            origin.add(0, 0d);
-            origin.add(1, qOffset);
-        }
-
-        sender.moveToXYCoords(origin);
-
-     //   machineOriginX = machineOriginX + xOffset - xDistanceToBorder;
-        qMachineOrigin = qBorder + qOffset;
-        return qMachineOrigin;
     }
-
-    private void waitToFinalizeMoveMent(Vector<Double> origin) {
-        // do sth better (query state until point is reached)
-        double currentX = sender.queryMachineCoord("X");
-        while ( currentX!= origin.get(0)) {
-            currentX = sender.queryMachineCoord("X");
-        }
-    }
-
-    public void moveToHomeFromPausedState(Vector<Double> offsets) {
+    public void jogToHomeFromPausedState(Vector<Double> offsets) {
         sender.jogLittleUp();
         Double newX = sender.queryMachineCoord("X");
         Double newY = sender.queryMachineCoord("Y");
@@ -118,13 +83,11 @@ public class HeightSensor {
     }
 
     public void moveRightForAngle() {
-        sender.jogLittleUp();
-        moveToWorkOrigin();
         Vector<Double> origin = new Vector<>();
         origin.add(0,20d);
         origin.add(1,0d);
+        sender.blockUntilIdle();
         sender.moveToXYCoords(origin);
-
     }
 
 
