@@ -10,9 +10,13 @@ public class FileWriter {
     BufferedWriter bufferedWriter;
 
     public FileWriter(String path, String newPostfix) {
-        String outFilename = path.substring(0,path.lastIndexOf(".")) + newPostfix + ".nc";
+        String outFilename = path.substring(0,path.lastIndexOf("."));
+        if (!"".equals(newPostfix))
+             outFilename = outFilename + newPostfix + ".nc";
+        else
+             outFilename = path;
+
         outFile = new File(outFilename);
-        System.out.println(outFilename);
         try {
             outFile.createNewFile();
             bufferedWriter = new BufferedWriter(new java.io.FileWriter(outFile));

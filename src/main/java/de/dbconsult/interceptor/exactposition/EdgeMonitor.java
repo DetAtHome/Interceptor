@@ -1,13 +1,16 @@
 package de.dbconsult.interceptor.exactposition;
 
+import de.dbconsult.interceptor.SerialDescriptor;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.exactheight.FileParser;
 import de.dbconsult.interceptor.exactheight.FileReader;
 import de.dbconsult.interceptor.exactheight.FileWriter;
+import de.dbconsult.interceptor.internal.SettingsRepository;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -18,6 +21,11 @@ public class EdgeMonitor extends Thread {
     WorkflowDataStore workflowDataStore;
     HeightSensor heightSensor;
     Vector<Double> workpieceOffset = new Vector<>();
+    Vector<Double> additionalOffset = new Vector<>();
+    Vector<Double> buttonOffset = new Vector<>();
+    Vector<Double> buttonAOffset = new Vector<>();
+    Vector<Double> buttonBOffset = new Vector<>();
+
     File inputFile;
     private FileParser fileParser;
     private FileWriter fileWriter;
@@ -27,30 +35,91 @@ public class EdgeMonitor extends Thread {
         heightSensor = new HeightSensor(workflowDataStore);
         inputFile = (File) workflowDataStore.read("RotationFileDirectory");
         workflowDataStore.update("EdgeFindInProgress", true);
-        fileParser = new FileParser(workflowDataStore);
-        fileWriter = new FileWriter(inputFile.getPath(), "_rotate");
+
     }
 
-
+    public HashMap<String, Double> loadSettings() {
+        workflowDataStore.update("EdgeFindInProgress", null);
+        return readSettings();
+    }
     @Override
     public void run() {
         workpieceOffset.add(0,(Double)workflowDataStore.read("WorkpieceXOffset"));
         workpieceOffset.add(1,(Double)workflowDataStore.read("WorkpieceYOffset"));
+        additionalOffset.add(0,(Double)workflowDataStore.read("CurrentWorkpieceOffsetX"));
+        additionalOffset.add(1,(Double)workflowDataStore.read("CurrentWorkpieceOffsetY"));
+        buttonAOffset.add(0,(Double)workflowDataStore.read("FwdButtonOffsetX"));
+        buttonAOffset.add(1,(Double)workflowDataStore.read("FwdButtonOffsetY"));
+        buttonBOffset.add(0,(Double)workflowDataStore.read("RvsButtonOffsetX"));
+        buttonBOffset.add(1,(Double)workflowDataStore.read("RvsButtonOffsetY"));
+
         workflowDataStore.update("EdgeFindInProgress", true);
         try {
             //give workflows time to finalize
             Thread.sleep(100);
-            Vector<Double> distancesFromEdges = findWorkpieceHome();
-            Double angle = findAngle();
-//            System.out.println(workflowDataStore.read("CurrentWorkpieceAngle"));
-            rotateFile();
-        } catch (Exception e) {
+            String state = (String)workflowDataStore.read("EdgeMonitorFunctionCalled");
+            if("saveSettings".equals(state)) {
+                saveSettings();
+                workflowDataStore.update("EdgeFindInProgress", null);
+                return;
+            }
+            Double angle = 0d;
+            if(!state.startsWith("Test")) {
+                if (state.contains("Lower")) {
+                    buttonOffset = buttonAOffset;
+                    heightSensor.normalYMovement();
+                } else {
+                    buttonOffset = buttonBOffset;
+                    heightSensor.invertYMovement();
+                }
+                initHighValueOnPCB();
+                findWorkpieceHome();
+                angle = findAngle();
+            } else {
+                angle = 45d;
+            }
+            workflowDataStore.update("CurrentWorkpieceAngle", angle);
+
+            fileParser = new FileParser(workflowDataStore);
+            if (state.contains("Lower")) {
+                inputFile = (File) workflowDataStore.read("RotationFileDirectory");
+                fileWriter = new FileWriter(inputFile.getPath(), "_rotate");
+                rotateAndMoveFile();
+            } else {
+                inputFile = (File) workflowDataStore.read("RotationFileDirectory");
+                String fileName = inputFile.getName();
+                String path = inputFile.getPath().replaceAll(fileName,"");
+                System.out.println(fileName);
+                System.out.println(path);
+                String projectName = fileName.split("_")[0];
+                System.out.println(projectName);
+                inputFile = new File(path + projectName + "_copperBottom.gbl_0.1000_iso_cnc.nc");
+                if (!inputFile.exists()) {
+                    System.out.println(inputFile.getPath() + " does not exist");
+                } else {
+                    fileWriter = new FileWriter(inputFile.getPath(), "_rotate");
+                    rotateAndMoveFile();
+                }
+                inputFile = new File(path + projectName + "_drill.txt_cnc.nc");
+                if (!inputFile.exists()) {
+                    System.out.println(inputFile.getPath() + " does not exist");
+                } else {
+                    fileWriter = new FileWriter(inputFile.getPath(), "_rotate");
+                    rotateAndMoveFile();
+                }
+            }
+
+
+        } catch (Throwable e) {
             e.printStackTrace();
         } finally {
             workflowDataStore.update("EdgeFindInProgress",null);
         }
     }
 
+    private void initHighValueOnPCB() {
+        heightSensor.initializeHeight();
+    }
     /**
      * Moves machine to left then bottom of PCB
      * Sets Working coords relative to the edges + the offset
@@ -111,7 +180,7 @@ public class EdgeMonitor extends Thread {
 
     }
 
-    private void rotateFile() {
+    private void rotateAndMoveFile() {
         FileReader reader = new FileReader(inputFile);
         String line;
         Rotate rotate = new Rotate((Double)workflowDataStore.read("CurrentWorkpieceAngle"));
@@ -132,8 +201,14 @@ public class EdgeMonitor extends Thread {
                 Point2D newDestination = rotate.transform(originalPointCoords.get(0),originalPointCoords.get(1));
                 String originalXAsString = String.format(Locale.ENGLISH,"%.4f", originalPointCoords.get(0));
                 String originalYAsString = String.format(Locale.ENGLISH,"%.4f", originalPointCoords.get(1));
-                String newXAsString = String.format(Locale.ENGLISH,"%.4f", newDestination.getX());
-                String newYAsString = String.format(Locale.ENGLISH,"%.4f", newDestination.getY());
+                String newXAsString = String.format(Locale.ENGLISH,"%.4f", newDestination.getX()
+                        + additionalOffset.get(0)
+                        + buttonOffset.get(0)
+                );
+                String newYAsString = String.format(Locale.ENGLISH,"%.4f", newDestination.getY()
+                        + buttonOffset.get(1)
+                        + buttonOffset.get(1)
+                );
 
                 line = line.replaceAll(originalXAsString, newXAsString);
                 line = line.replaceAll(originalYAsString, newYAsString);
@@ -145,9 +220,17 @@ public class EdgeMonitor extends Thread {
             throw e;
         }
     }
+
     private Double getAngle(Point2D origin, Point2D bottomLeft, Point2D bottomForAngle) {
         return origin.angle(bottomForAngle, bottomLeft);
     //    return Math.toDegrees(atan2(bottomForAngle.getY(),bottomForAngle.getX()) - atan2(bottomLeft.getY(),bottomLeft.getX()));
     }
 
+    private void saveSettings() {
+        new SettingsRepository().writeOffsets(workflowDataStore);
+    }
+
+    private HashMap<String, Double> readSettings() {
+        return new SettingsRepository().readOffsets();
+    }
 }

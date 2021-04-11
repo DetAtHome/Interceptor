@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.dbconsult.interceptor.workflow.LogAndPassFrame">
   <grid id="27dc6" binding="mainpanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="996" height="872"/>
+      <xy x="20" y="20" width="996" height="962"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -856,709 +856,893 @@
                       </component>
                     </children>
                   </grid>
-                  <grid id="be11c" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
+                  <scrollpane id="8ad75">
                     <constraints>
                       <tabbedpane title="2Sided PCB"/>
                     </constraints>
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <grid id="d0f9d" layout-manager="GridBagLayout">
-                        <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                        </constraints>
+                      <grid id="be11c" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints/>
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="6515f" class="javax.swing.JLabel">
+                          <grid id="d0f9d" layout-manager="GridBagLayout">
                             <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
-                            <properties>
-                              <enabled value="false"/>
-                              <font size="16" style="1"/>
-                              <text value="Lets create a double sided PCB"/>
-                            </properties>
-                          </component>
-                          <hspacer id="d0f61">
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="6515f" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <enabled value="false"/>
+                                  <font size="16" style="1"/>
+                                  <text value="Lets create a double sided PCB"/>
+                                </properties>
+                              </component>
+                              <vspacer id="ef6e2">
+                                <constraints>
+                                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                              </vspacer>
+                              <component id="b5e17" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <font size="14" style="1"/>
+                                  <text value="Step 0"/>
+                                </properties>
+                              </component>
+                              <component id="c68e2" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="6" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Fasten the single sided PBC raw material to your mill."/>
+                                </properties>
+                              </component>
+                              <component id="a55d" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="8" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, now Hand's off your mill"/>
+                                </properties>
+                              </component>
+                              <component id="95ce" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="7" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Did that, take me to step 1"/>
+                                </properties>
+                              </component>
+                              <component id="71ad1" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="7" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Put a V-shaped carving bit into the mill"/>
+                                </properties>
+                              </component>
+                              <component id="79054" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <font size="14" style="1"/>
+                                  <text value="Step 1: Initing"/>
+                                </properties>
+                              </component>
+                              <component id="7a64d" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="8" column="5" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Homing"/>
+                                </properties>
+                              </component>
+                              <component id="b6e34" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="8" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="7b4a9" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="9" column="5" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Zero x y"/>
+                                </properties>
+                              </component>
+                              <component id="64a39" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="9" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="7c43d" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="10" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Jog the mill to where the workpiece is"/>
+                                </properties>
+                              </component>
+                              <component id="2baad" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="10" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Did that, move on"/>
+                                </properties>
+                              </component>
+                              <component id="a895f" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="11" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Saving restore coords"/>
+                                </properties>
+                              </component>
+                              <component id="c8ab1" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="12" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="9aad6" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="11" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="56be9" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="12" column="5" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Zero X Y"/>
+                                </properties>
+                              </component>
+                              <component id="c4bd4" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="13" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Doing a Z-probe (make sure it can be done autmatically)"/>
+                                </properties>
+                              </component>
+                              <component id="80b66" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="13" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="9e72b" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="14" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="61c3e" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="14" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Move slightly abouve the PCB"/>
+                                </properties>
+                              </component>
+                              <component id="2a9a7" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="15" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Createing adjusted Mask file"/>
+                                </properties>
+                              </component>
+                              <component id="8684d" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="15" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="f03f4" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="16" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Load the copper-top nc file to candle"/>
+                                </properties>
+                              </component>
+                              <component id="1ef98" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <font size="14" style="1"/>
+                                  <text value="Step 2: Isolation routing"/>
+                                </properties>
+                              </component>
+                              <component id="5b56" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="16" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Your turn, most of the time"/>
+                                </properties>
+                              </component>
+                              <component id="5f548" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="17" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Create a hightmap"/>
+                                </properties>
+                              </component>
+                              <component id="29758" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="19" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Use the hightmap"/>
+                                </properties>
+                              </component>
+                              <component id="c31d8" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="20" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Start isolation routing, hit when done"/>
+                                </properties>
+                              </component>
+                              <component id="c0dfd" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="21" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Do a toolchange to a 1mm flatend mill"/>
+                                </properties>
+                              </component>
+                              <component id="420d3" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="22" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Z Probe and reset Z"/>
+                                </properties>
+                              </component>
+                              <component id="9836a" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="22" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="a9da" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="23" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <font size="14" style="1"/>
+                                  <text value="Step 3: Apply solder mask"/>
+                                </properties>
+                              </component>
+                              <component id="559d5" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="23" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Hold on, presenting the workplace"/>
+                                </properties>
+                              </component>
+                              <component id="69bda" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="23" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Move drill aside"/>
+                                </properties>
+                              </component>
+                              <component id="2ae79" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="23" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="b3b24" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="24" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Apply solder resist fluid"/>
+                                </properties>
+                              </component>
+                              <component id="a3c9d" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="24" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Did that, go on"/>
+                                </properties>
+                              </component>
+                              <component id="362dc" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="25" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Shine some UV light to it (cure solder resist)"/>
+                                </properties>
+                              </component>
+                              <component id="afc4b" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="26" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Run adjusted mask.nc file"/>
+                                </properties>
+                              </component>
+                              <component id="947d" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="27" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <font size="14" style="1"/>
+                                  <text value="Step 4: Drill the holes"/>
+                                </properties>
+                              </component>
+                              <component id="b52f6" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="27" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Drilling time, repeat for all drill widths"/>
+                                </properties>
+                              </component>
+                              <component id="72870" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="27" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Toolchange to your drill bit"/>
+                                </properties>
+                              </component>
+                              <component id="95573" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="7" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="14d72" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="10" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="d4fea" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="16" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="58558" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="17" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="60dca" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="19" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="ef8f7" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="20" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="af5b4" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="21" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="ab63b" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="24" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="dff45" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="25" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="95746" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="26" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="416e2" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="27" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="99329" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="28" column="5" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Z Probing again"/>
+                                </properties>
+                              </component>
+                              <component id="b323b" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="28" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="8f511" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="29" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Run Drill file"/>
+                                </properties>
+                              </component>
+                              <component id="3eafe" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="29" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="dd108" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="30" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <font size="14" style="1"/>
+                                  <text value="Step 5: Cutout"/>
+                                </properties>
+                              </component>
+                              <component id="2f030" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="30" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Final step"/>
+                                </properties>
+                              </component>
+                              <component id="c2a2d" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="30" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Toolchange to the cutout tool "/>
+                                </properties>
+                              </component>
+                              <component id="b45d9" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="30" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="8108" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="31" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="ZProbe for the last time"/>
+                                </properties>
+                              </component>
+                              <component id="ba262" class="javax.swing.JButton" default-binding="true">
+                                <constraints>
+                                  <grid row="32" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Run the cutout nc"/>
+                                </properties>
+                              </component>
+                              <component id="b8ddd" class="javax.swing.JCheckBox" default-binding="true">
+                                <constraints>
+                                  <grid row="32" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="OK, done"/>
+                                </properties>
+                              </component>
+                              <component id="2048d" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="33" column="0" row-span="1" col-span="10" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <font size="16" style="1"/>
+                                  <horizontalTextPosition value="0"/>
+                                  <text value="You made it!"/>
+                                </properties>
+                              </component>
+                              <component id="b2643" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="18" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="LAST CHANCE TO DO A TOOLCHANGE"/>
+                                </properties>
+                              </component>
+                              <component id="27835" class="javax.swing.JTextField" binding="txtXWorkpieceOffset">
+                                <constraints>
+                                  <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="5"/>
+                                </properties>
+                              </component>
+                              <component id="9c730" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="X/Y Workpiece offsets:"/>
+                                </properties>
+                              </component>
+                              <component id="f9217" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Homeposition on Workpiece"/>
+                                </properties>
+                              </component>
+                              <component id="c9da3" class="javax.swing.JButton" binding="findLowerLeft">
+                                <constraints>
+                                  <grid row="2" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Find lower left"/>
+                                </properties>
+                              </component>
+                              <component id="4f17c" class="javax.swing.JTextField" binding="txtXOffset">
+                                <constraints>
+                                  <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="5"/>
+                                </properties>
+                              </component>
+                              <component id="aa124" class="javax.swing.JButton" binding="projectDirectoryButton" default-binding="true">
+                                <constraints>
+                                  <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Project Directory"/>
+                                </properties>
+                              </component>
+                              <hspacer id="d0f61">
+                                <constraints>
+                                  <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                              </hspacer>
+                              <hspacer id="2874a">
+                                <constraints>
+                                  <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                              </hspacer>
+                              <component id="84f48" class="javax.swing.JTextField" binding="txtYWorkpieceOffset">
+                                <constraints>
+                                  <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="5"/>
+                                </properties>
+                              </component>
+                              <component id="12715" class="javax.swing.JTextField" binding="txtYOffset">
+                                <constraints>
+                                  <grid row="2" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="5"/>
+                                </properties>
+                              </component>
+                              <hspacer id="e437c">
+                                <constraints>
+                                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0" ipadx="50"/>
+                                </constraints>
+                              </hspacer>
+                              <hspacer id="246cb">
+                                <constraints>
+                                  <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0" ipadx="50"/>
+                                </constraints>
+                              </hspacer>
+                              <hspacer id="26066">
+                                <constraints>
+                                  <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0" ipadx="50"/>
+                                </constraints>
+                              </hspacer>
+                              <hspacer id="1260b">
+                                <constraints>
+                                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0" ipadx="10"/>
+                                </constraints>
+                              </hspacer>
+                              <component id="d0ad4" class="javax.swing.JButton" binding="btnTest">
+                                <constraints>
+                                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="TestLower"/>
+                                </properties>
+                              </component>
+                              <component id="c8b0e" class="javax.swing.JButton" binding="btnTestUpper">
+                                <constraints>
+                                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="TestUpper"/>
+                                </properties>
+                              </component>
+                              <component id="36190" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Button Offset from center X/Y"/>
+                                </properties>
+                              </component>
+                              <component id="2dbc1" class="javax.swing.JTextField" binding="txtAButtonOffsetX">
+                                <constraints>
+                                  <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="0.2"/>
+                                </properties>
+                              </component>
+                              <component id="6e438" class="javax.swing.JTextField" binding="txtAButtonOffsetY">
+                                <constraints>
+                                  <grid row="3" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="0.3"/>
+                                </properties>
+                              </component>
+                              <component id="6c154" class="javax.swing.JButton" binding="cleanButton" default-binding="true">
+                                <constraints>
+                                  <grid row="5" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Clean"/>
+                                </properties>
+                              </component>
+                              <component id="69708" class="javax.swing.JTextField" binding="txtBButtonOffsetX">
+                                <constraints>
+                                  <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="-0.4"/>
+                                </properties>
+                              </component>
+                              <component id="efebd" class="javax.swing.JButton" binding="flipButton" default-binding="true">
+                                <constraints>
+                                  <grid row="4" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Flip"/>
+                                </properties>
+                              </component>
+                              <component id="cec73" class="javax.swing.JTextField" binding="txtBButtonOffsetY">
+                                <constraints>
+                                  <grid row="4" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="-0.2"/>
+                                </properties>
+                              </component>
+                              <component id="64e91" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Button Offset from center X/Y when flipped"/>
+                                </properties>
+                              </component>
+                              <component id="8ff20" class="javax.swing.JButton" binding="sveSettings">
+                                <constraints>
+                                  <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Save Settings"/>
+                                </properties>
+                              </component>
+                              <component id="e26c6" class="javax.swing.JButton" binding="loadSettings">
+                                <constraints>
+                                  <grid row="1" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                  <gridbag weightx="0.0" weighty="0.0"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Load Settings"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <hspacer id="b9acc">
                             <constraints>
-                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                             </constraints>
                           </hspacer>
-                          <vspacer id="ef6e2">
+                          <vspacer id="e4771">
                             <constraints>
                               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
                             </constraints>
                           </vspacer>
-                          <component id="b5e17" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <font size="14" style="1"/>
-                              <text value="Step 0"/>
-                            </properties>
-                          </component>
-                          <component id="c68e2" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Fasten the single sided PBC raw material to your mill."/>
-                            </properties>
-                          </component>
-                          <component id="a55d" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="4" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, now Hand's off your mill"/>
-                            </properties>
-                          </component>
-                          <component id="95ce" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="3" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Did that, take me to step 1"/>
-                            </properties>
-                          </component>
-                          <component id="71ad1" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="3" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Put a V-shaped carving bit into the mill"/>
-                            </properties>
-                          </component>
-                          <component id="79054" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <font size="14" style="1"/>
-                              <text value="Step 1: Initing"/>
-                            </properties>
-                          </component>
-                          <component id="7a64d" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="4" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Homing"/>
-                            </properties>
-                          </component>
-                          <component id="b6e34" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="7b4a9" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="5" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Zero x y"/>
-                            </properties>
-                          </component>
-                          <component id="64a39" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="5" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="7c43d" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="6" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Jog the mill to where the workpiece is"/>
-                            </properties>
-                          </component>
-                          <component id="2baad" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="6" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Did that, move on"/>
-                            </properties>
-                          </component>
-                          <component id="a895f" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="7" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Saving restore coords"/>
-                            </properties>
-                          </component>
-                          <component id="c8ab1" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="8" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="9aad6" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="7" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="56be9" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="8" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Zero X Y"/>
-                            </properties>
-                          </component>
-                          <component id="c4bd4" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="9" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Doing a Z-probe (make sure it can be done autmatically)"/>
-                            </properties>
-                          </component>
-                          <component id="80b66" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="9" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="9e72b" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="10" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="61c3e" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="10" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Move slightly abouve the PCB"/>
-                            </properties>
-                          </component>
-                          <component id="2a9a7" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="11" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Createing adjusted Mask file"/>
-                            </properties>
-                          </component>
-                          <component id="8684d" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="11" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="f03f4" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="12" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Load the copper-top nc file to candle"/>
-                            </properties>
-                          </component>
-                          <component id="1ef98" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <font size="14" style="1"/>
-                              <text value="Step 2: Isolation routing"/>
-                            </properties>
-                          </component>
-                          <component id="5b56" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="12" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Your turn, most of the time"/>
-                            </properties>
-                          </component>
-                          <component id="5f548" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="13" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Create a hightmap"/>
-                            </properties>
-                          </component>
-                          <component id="29758" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="15" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Use the hightmap"/>
-                            </properties>
-                          </component>
-                          <component id="c31d8" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="16" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Start isolation routing, hit when done"/>
-                            </properties>
-                          </component>
-                          <component id="c0dfd" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="17" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Do a toolchange to a 1mm flatend mill"/>
-                            </properties>
-                          </component>
-                          <component id="420d3" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="18" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Z Probe and reset Z"/>
-                            </properties>
-                          </component>
-                          <component id="9836a" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="18" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="a9da" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <font size="14" style="1"/>
-                              <text value="Step 3: Apply solder mask"/>
-                            </properties>
-                          </component>
-                          <component id="559d5" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="19" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Hold on, presenting the workplace"/>
-                            </properties>
-                          </component>
-                          <component id="69bda" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="19" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Move drill aside"/>
-                            </properties>
-                          </component>
-                          <component id="2ae79" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="19" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="b3b24" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="20" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Apply solder resist fluid"/>
-                            </properties>
-                          </component>
-                          <component id="a3c9d" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="20" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Did that, go on"/>
-                            </properties>
-                          </component>
-                          <component id="362dc" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="21" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Shine some UV light to it (cure solder resist)"/>
-                            </properties>
-                          </component>
-                          <component id="afc4b" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="22" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Run adjusted mask.nc file"/>
-                            </properties>
-                          </component>
-                          <component id="947d" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="23" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <font size="14" style="1"/>
-                              <text value="Step 4: Drill the holes"/>
-                            </properties>
-                          </component>
-                          <component id="b52f6" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="23" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Drilling time, repeat for all drill widths"/>
-                            </properties>
-                          </component>
-                          <component id="72870" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="23" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Toolchange to your drill bit"/>
-                            </properties>
-                          </component>
-                          <component id="95573" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="3" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="14d72" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="6" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="d4fea" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="12" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="58558" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="13" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="60dca" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="15" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="ef8f7" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="16" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="af5b4" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="17" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="ab63b" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="20" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="dff45" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="21" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="95746" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="22" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="416e2" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="23" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="99329" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="24" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Z Probing again"/>
-                            </properties>
-                          </component>
-                          <component id="b323b" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="24" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="8f511" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="25" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Run Drill file"/>
-                            </properties>
-                          </component>
-                          <component id="3eafe" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="25" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="dd108" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="26" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <font size="14" style="1"/>
-                              <text value="Step 5: Cutout"/>
-                            </properties>
-                          </component>
-                          <component id="2f030" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="26" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Final step"/>
-                            </properties>
-                          </component>
-                          <component id="c2a2d" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="26" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Toolchange to the cutout tool "/>
-                            </properties>
-                          </component>
-                          <component id="b45d9" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="26" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="8108" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="27" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="ZProbe for the last time"/>
-                            </properties>
-                          </component>
-                          <component id="ba262" class="javax.swing.JButton" default-binding="true">
-                            <constraints>
-                              <grid row="28" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Run the cutout nc"/>
-                            </properties>
-                          </component>
-                          <component id="b8ddd" class="javax.swing.JCheckBox" default-binding="true">
-                            <constraints>
-                              <grid row="28" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="OK, done"/>
-                            </properties>
-                          </component>
-                          <component id="2048d" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="29" column="0" row-span="1" col-span="7" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <font size="16" style="1"/>
-                              <horizontalTextPosition value="0"/>
-                              <text value="You made it!"/>
-                            </properties>
-                          </component>
-                          <component id="b2643" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="14" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="LAST CHANCE TO DO A TOOLCHANGE"/>
-                            </properties>
-                          </component>
-                          <component id="c9da3" class="javax.swing.JButton" binding="findLowerLeft">
-                            <constraints>
-                              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Find lower left"/>
-                            </properties>
-                          </component>
-                          <component id="9c730" class="javax.swing.JLabel">
-                            <constraints>
-                              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="X/Y Workpiece offsets:"/>
-                            </properties>
-                          </component>
-                          <component id="27835" class="javax.swing.JTextField" binding="txtXWorkpieceOffset">
-                            <constraints>
-                              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                                <preferred-size width="150" height="-1"/>
-                              </grid>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="5"/>
-                            </properties>
-                          </component>
-                          <component id="84f48" class="javax.swing.JTextField" binding="txtYWorkpieceOffset">
-                            <constraints>
-                              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                                <preferred-size width="150" height="-1"/>
-                              </grid>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="5"/>
-                            </properties>
-                          </component>
-                          <component id="aa124" class="javax.swing.JButton" binding="projectDirectoryButton" default-binding="true">
-                            <constraints>
-                              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <gridbag weightx="0.0" weighty="0.0"/>
-                            </constraints>
-                            <properties>
-                              <text value="Project Directory"/>
-                            </properties>
-                          </component>
                         </children>
                       </grid>
-                      <hspacer id="b9acc">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                      </hspacer>
-                      <vspacer id="e4771">
-                        <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                      </vspacer>
                     </children>
-                  </grid>
+                  </scrollpane>
                 </children>
               </tabbedpane>
             </children>

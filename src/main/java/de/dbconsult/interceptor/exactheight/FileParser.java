@@ -1,8 +1,6 @@
 package de.dbconsult.interceptor.exactheight;
 
 import de.dbconsult.interceptor.WorkflowDataStore;
-
-import java.util.HashMap;
 import java.util.Vector;
 
 public class FileParser {

@@ -41,7 +41,7 @@ public class MonitorCurrentPositionWorkflow extends AbstractWorkflow {
                         workflowDataStore.update("WPOS_X", Double.parseDouble(mposCoords[0]) - (Double) workflowDataStore.read("WCO_X"));
                         workflowDataStore.update("WPOS_Y", Double.parseDouble(mposCoords[1]) - (Double) workflowDataStore.read("WCO_Y"));
                         workflowDataStore.update("WPOS_Z", Double.parseDouble(mposCoords[2]) - (Double) workflowDataStore.read("WCO_Z"));
-                    } catch (NumberFormatException nfe) {
+                    } catch (Exception nfe) {
                         nfe.printStackTrace();
                         System.err.println(msg);
                     }

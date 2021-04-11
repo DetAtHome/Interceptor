@@ -32,6 +32,21 @@ public class AdditionalCommunicator {
         return answer;
     }
 
+    public String blockUntilOk() {
+        SerialCommunication mill = getCommDescrption("mill").getComm();
+        String answer = "";
+
+        while(!answer.toLowerCase().contains("ok")) {
+            answer=new String(mill.readFully().getOutput());
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return answer;
+    }
+
     public void directWrite(String to, String data) {
         SerialCommunication toComm = getCommDescrption(to).getComm();
         toComm.write(data);

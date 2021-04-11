@@ -41,6 +41,17 @@ public class GCodeSender {
 
     }
 
+    public void normalYMovement() {
+        getCommDescription().write("$3=5\n");
+        blockUntilOK();
+    }
+
+    public void inversYMovement() {
+        getCommDescription().write("$3=7\n");
+        blockUntilOK();
+
+    }
+
     public void blockUntilIdle() {
         String answer;
         do {
@@ -89,6 +100,7 @@ public class GCodeSender {
         getCommDescription().write("G90G21G0X0Y0\n");
         blockUntilOK();
     }
+
 
     public void jogLittleUp() {
         jog("Z",2d);
@@ -155,9 +167,13 @@ public class GCodeSender {
     private String blockUntil(String semaphore) {
         SerialCommunication mill = getCommDescription();
         String answer = "";
+        Long start = System.currentTimeMillis();
         while(!answer.toLowerCase().contains(semaphore.toLowerCase())) {
             WorkflowResult result = mill.readFully();
             answer = new String(result.getOutput(),0,result.getLen());
+            if (System.currentTimeMillis()-start>15000) {
+                throw new RuntimeException("Timeout while waiting");
+            }
             if (answer.toLowerCase().contains("alarm") || answer.toLowerCase().contains("error"))
                 throw new RuntimeException("Unexpected machining error or alarm: " + answer);
         }

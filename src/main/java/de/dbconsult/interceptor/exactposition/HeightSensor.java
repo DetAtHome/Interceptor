@@ -33,6 +33,10 @@ public class HeightSensor {
 
     }
 
+    public void initializeHeight() {
+        extraReader.initializeHeight();
+    }
+
     public void cleanUp(Double result) {
         workflowDataStore.update("CurrentWorkpieceAngle",result);
         moveToOrigin();
@@ -49,6 +53,18 @@ public class HeightSensor {
         sender.moveToOrigin();
 
     }
+
+    public void normalYMovement() {
+        sender.blockUntilIdle();
+        sender.normalYMovement();
+    }
+
+    public void invertYMovement() {
+        sender.blockUntilIdle();
+        sender.inversYMovement();
+
+    }
+
     public void jogToHomeFromPausedState(Vector<Double> offsets) {
         sender.jogLittleUp();
         Double newX = sender.queryMachineCoord("X");

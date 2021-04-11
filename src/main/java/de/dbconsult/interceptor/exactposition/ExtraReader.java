@@ -12,6 +12,16 @@ public class ExtraReader {
         this.workflowDataStore = workflowDataStore;
     }
 
+    public void initializeHeight() {
+        SerialCommunication extra = getCommDescription();
+        extra.write("h;");
+        String answer = "";
+        while(!answer.toLowerCase().contains("ok")) {
+            WorkflowResult result =extra.readFully();
+            answer = new String(result.getOutput(),0,result.getLen());
+        }
+
+    }
     public long readHeightFromExtra() {
         SerialCommunication extra = getCommDescription();
         extra.write("h;");

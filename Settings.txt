@@ -1,0 +1,8 @@
+WorkpieceXOffset=5.0
+WorkpieceYOffset=5.0
+CurrentWorkpieceOffsetX=0.0
+CurrentWorkpieceOffsetY=0.0
+FwdButtonOffsetX=0.0
+FwdButtonOffsetY=0.0
+RvsButtonOffsetX=0.0
+RvsButtonOffsetY=0.0

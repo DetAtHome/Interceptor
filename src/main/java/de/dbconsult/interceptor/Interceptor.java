@@ -79,7 +79,7 @@ public class Interceptor {
                     System.out.println("stored to internal pc q: " + new String(request.getOutput()) + " size is now" + internalQueuePC.size());
                 } else {
                     request = orchestrator.enqueueToWorkflow(request);
-                    writeRequest(request, isTest);
+                    if(!request.getToDestination().getName().equals("ABORT")) writeRequest(request, isTest);
                 }
             }
             // get from 2
