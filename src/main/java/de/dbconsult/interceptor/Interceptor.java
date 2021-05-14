@@ -3,6 +3,7 @@ package de.dbconsult.interceptor;
 import de.dbconsult.interceptor.exactposition.ExtraReader;
 import de.dbconsult.interceptor.internal.ExternalLogger;
 import de.dbconsult.interceptor.serial.SerialCommunication;
+import de.dbconsult.interceptor.wifi.WifiCommunication;
 import de.dbconsult.interceptor.workflow.internalqueue.InternalQueue;
 
 public class Interceptor {
@@ -128,9 +129,23 @@ public class Interceptor {
     }
 
     private static void setupSerials(SerialDescriptor[] serials) throws Exception {
-        SerialCommunication com1 = new SerialCommunication(serials[0].getName(), serials[0].getPortName(), 115200, 10);
-        SerialCommunication com2 = new SerialCommunication(serials[1].getName(), serials[1].getPortName(), 115200, 10);
-        SerialCommunication com3 = new SerialCommunication(serials[2].getName(), serials[2].getPortName(), 115200, 10);
+        Communication com1 = null;
+        Communication com2 = null;
+        Communication com3 = null;
+        if(!serials[0].getPortName().equals("WIFI"))
+            com1 = new SerialCommunication(serials[0].getName(), serials[0].getPortName(), 115200, 10);
+        else
+            com1 = WifiCommunication.getInstance();
+        if(!serials[1].getPortName().equals("WIFI"))
+            com2 = new SerialCommunication(serials[1].getName(), serials[1].getPortName(), 115200, 10);
+        else
+            com2 = WifiCommunication.getInstance();
+
+        if(!serials[2].getPortName().equals("WIFI"))
+            com3 = new SerialCommunication(serials[2].getName(), serials[2].getPortName(), 115200, 10);
+        else
+            com3 = WifiCommunication.getInstance();
+
         serials[0].setComm(com1);
         serials[1].setComm(com2);
         serials[2].setComm(com3);
@@ -151,9 +166,9 @@ public class Interceptor {
             }
         } else {
             if (isPc)
-                request = serialsRepository.getPc().getComm().readFully();
+                request = serialsRepository.getPc().getComm().readFully("tomill");
             else
-                request = serialsRepository.getMill().getComm().readFully();
+                request = serialsRepository.getMill().getComm().readFully("tomill");
         }
         if (isPc) {
             request.setFormSource(serialsRepository.getPc());

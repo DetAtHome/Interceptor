@@ -1,9 +1,10 @@
 package de.dbconsult.interceptor.serial;
 
 import com.fazecast.jSerialComm.SerialPort;
+import de.dbconsult.interceptor.Communication;
 import de.dbconsult.interceptor.WorkflowResult;
 
-public class SerialCommunication {
+public class SerialCommunication implements Communication {
 
     int baud;
     String portName, name;
@@ -54,7 +55,8 @@ public class SerialCommunication {
         }
     }
 
-    public WorkflowResult readFully() {
+    public WorkflowResult readFully(String channel) {
+        // channel is not needed here, cause extra runs on a different port and therefore no distinguishing is needed
         byte readBuffer[] = new byte[1024];
         byte read[] = new byte[1];
         int index =0;

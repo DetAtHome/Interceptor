@@ -1,7 +1,5 @@
 package de.dbconsult.interceptor;
 
-import de.dbconsult.interceptor.serial.SerialCommunication;
-
 public class SerialDescriptor {
 
     public static final int SWALLOW = 0;
@@ -11,7 +9,7 @@ public class SerialDescriptor {
     public final int serialId;
     public final String portName;
     public final String name;
-    private SerialCommunication comm;
+    private Communication comm;
 
     public SerialDescriptor(int id, String name, String portName) {
         serialId = id;
@@ -19,11 +17,11 @@ public class SerialDescriptor {
         this.portName = portName;
     }
 
-    public void setComm(SerialCommunication comm) {
+    public void setComm(Communication comm) {
         this.comm = comm;
     }
 
-    public SerialCommunication getComm() {
+    public Communication getComm() {
         return comm;
     }
 

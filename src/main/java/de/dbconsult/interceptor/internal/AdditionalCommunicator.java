@@ -1,11 +1,6 @@
 package de.dbconsult.interceptor.internal;
 
 import de.dbconsult.interceptor.*;
-import de.dbconsult.interceptor.serial.SerialCommunication;
-
-import java.util.concurrent.locks.Lock;
-
-import static java.lang.Thread.currentThread;
 
 public class AdditionalCommunicator {
 
@@ -17,12 +12,12 @@ public class AdditionalCommunicator {
 
 
     public String blockUntilIdle() {
-        SerialCommunication mill = getCommDescrption("mill").getComm();
+        Communication mill = getCommDescrption("mill").getComm();
         String answer = "";
 
         while(!answer.toLowerCase().contains("idle")) {
             mill.write("?");
-            answer=new String(mill.readFully().getOutput());
+            answer=new String(mill.readFully("tomill").getOutput());
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
@@ -33,11 +28,11 @@ public class AdditionalCommunicator {
     }
 
     public String blockUntilOk() {
-        SerialCommunication mill = getCommDescrption("mill").getComm();
+        Communication mill = getCommDescrption("mill").getComm();
         String answer = "";
 
         while(!answer.toLowerCase().contains("ok")) {
-            answer=new String(mill.readFully().getOutput());
+            answer=new String(mill.readFully("tomill").getOutput());
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
@@ -48,22 +43,22 @@ public class AdditionalCommunicator {
     }
 
     public void directWrite(String to, String data) {
-        SerialCommunication toComm = getCommDescrption(to).getComm();
+        Communication toComm = getCommDescrption(to).getComm();
         toComm.write(data);
     }
 
     public void switchProbingOff() {
-        switchProbing("p0;");
+        switchProbing(">p0;");
     }
 
     public void switchProbingOn() {
-        switchProbing("p1;");
+        switchProbing(">p1;");
     }
 
     public void setSpindleSpeed(double speed) {
         SerialDescriptor extra = getCommDescrption("extra");
         int intSpeed = ((Double)speed).intValue();
-        String strData = "s" + intSpeed + ";";
+        String strData = ">s" + intSpeed + ";";
         WorkflowResult data = new WorkflowResult(0, null,extra,strData.getBytes(), strData.length() );
         extra.getComm().write(data);
     }

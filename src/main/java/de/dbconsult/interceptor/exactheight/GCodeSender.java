@@ -1,10 +1,10 @@
 package de.dbconsult.interceptor.exactheight;
 
 
+import de.dbconsult.interceptor.Communication;
 import de.dbconsult.interceptor.SerialsRepository;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
-import de.dbconsult.interceptor.serial.SerialCommunication;
 
 import java.util.Locale;
 import java.util.Vector;
@@ -61,7 +61,7 @@ public class GCodeSender {
 
     public Double initialzeZHome() {
         // remove arbitrary junk from serial
-        String junk = new String(getCommDescription().readFully().getOutput());
+        String junk = new String(getCommDescription().readFully("tomill").getOutput());
         System.out.println("Initializing" + junk);
         getCommDescription().write("G21\n");
         blockUntilOK();
@@ -165,11 +165,11 @@ public class GCodeSender {
 
 
     private String blockUntil(String semaphore) {
-        SerialCommunication mill = getCommDescription();
+        Communication mill = getCommDescription();
         String answer = "";
         Long start = System.currentTimeMillis();
         while(!answer.toLowerCase().contains(semaphore.toLowerCase())) {
-            WorkflowResult result = mill.readFully();
+            WorkflowResult result = mill.readFully("tomill");
             answer = new String(result.getOutput(),0,result.getLen());
             if (System.currentTimeMillis()-start>15000) {
                 throw new RuntimeException("Timeout while waiting");
@@ -188,9 +188,9 @@ public class GCodeSender {
         return blockUntil("ok");
     }
 
-    private SerialCommunication getCommDescription() {
+    private Communication getCommDescription() {
         SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
-        SerialCommunication toComm = serialsRepository.getMill().getComm();
+        Communication toComm = serialsRepository.getMill().getComm();
         return toComm;
     }
 }

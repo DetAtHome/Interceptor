@@ -1,9 +1,9 @@
 package de.dbconsult.interceptor.exactposition;
 
+import de.dbconsult.interceptor.Communication;
 import de.dbconsult.interceptor.SerialsRepository;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
-import de.dbconsult.interceptor.serial.SerialCommunication;
 import static de.dbconsult.interceptor.internal.Reversed.reversed;
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ public class ExtraReader {
 
     WorkflowDataStore workflowDataStore;
     private ArrayList<String> lastLine = new ArrayList<>();
-    SerialCommunication extra = null;
+    Communication extra = null;
 
     long logLine=0;
 
@@ -30,7 +30,7 @@ public class ExtraReader {
         readingPaused = true;
         while(!answer.toLowerCase().contains("ok")) {
 
-            WorkflowResult result =extra.readFully();
+            WorkflowResult result =extra.readFully("toextra");
             answer = new String(result.getOutput(),0,result.getLen());
             lastLine.add(answer.trim());
         }
@@ -42,7 +42,7 @@ public class ExtraReader {
         String answer = "";
         readingPaused = true;
         while(! answer.toLowerCase().contains("h")) {
-            WorkflowResult result =extra.readFully();
+            WorkflowResult result =extra.readFully("toextra");
             answer = new String(result.getOutput(),0,result.getLen());
             lastLine.add(answer.trim());
             if (answer.toLowerCase().contains("alarm") || answer.toLowerCase().contains("error")) {
@@ -71,10 +71,12 @@ public class ExtraReader {
     public String getLastLog(boolean excludeHeartbeat) {
         String bufferdLines = "";
         if(!readingPaused) {
-            WorkflowResult result =extra.readFully();
+            WorkflowResult result =extra.readFully("toextra");
             String answer = new String(result.getOutput(),0,result.getLen());
-            if(answer.trim().length()>0)
-                lastLine.add(answer.trim());
+            if (!answer.contains("undefined")) {
+                if (answer.trim().length() > 0)
+                    lastLine.add(answer.trim());
+            }
         }
         for (String line: reversed(lastLine)) {
             logLine++;
@@ -87,9 +89,9 @@ public class ExtraReader {
 
         return bufferdLines;
     }
-    private SerialCommunication getCommDescription() {
+    private Communication getCommDescription() {
         SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
-        SerialCommunication toComm = serialsRepository.getExtra().getComm();
+        Communication toComm = serialsRepository.getExtra().getComm();
         return toComm;
     }
 }

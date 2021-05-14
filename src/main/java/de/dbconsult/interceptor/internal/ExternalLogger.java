@@ -17,9 +17,7 @@ public class ExternalLogger implements Runnable {
     @Override
     public void run() {
         while (true) {
-           // extraReader.send(null);
-
-            frame.extraLog(extraReader.getLastLog(frame.isHeartbeatEnabled()));
+           frame.extraLog(extraReader.getLastLog(frame.isHeartbeatEnabled()));
         }
     }
 }

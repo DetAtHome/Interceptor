@@ -1,11 +1,7 @@
 package de.dbconsult.interceptor.internal;
 
-import de.dbconsult.interceptor.Orchestrator;
-import de.dbconsult.interceptor.SerialsRepository;
-import de.dbconsult.interceptor.WorkflowDataStore;
-import de.dbconsult.interceptor.WorkflowResult;
+import de.dbconsult.interceptor.*;
 import de.dbconsult.interceptor.exactheight.GCodeSender;
-import de.dbconsult.interceptor.serial.SerialCommunication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -87,7 +83,7 @@ public class UIController {
             workflowDataStore.update("WPOS_Z", wpos_z);
             rd.close();
             SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
-            SerialCommunication mill = serialsRepository.getMill().getComm();
+            Communication mill = serialsRepository.getMill().getComm();
             String homeMessage = "$H\n";
             String resetTo0Message = "G92X0Y0Z0\n";
             String workHomeMessage = "G0X" + wpos_x + "Y" + wpos_y + "Z" + wpos_z + "\n";

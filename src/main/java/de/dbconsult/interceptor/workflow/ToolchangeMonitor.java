@@ -1,11 +1,7 @@
 package de.dbconsult.interceptor.workflow;
 
-import de.dbconsult.interceptor.SerialDescriptor;
-import de.dbconsult.interceptor.SerialsRepository;
-import de.dbconsult.interceptor.WorkflowDataStore;
-import de.dbconsult.interceptor.WorkflowResult;
+import de.dbconsult.interceptor.*;
 import de.dbconsult.interceptor.internal.AdditionalCommunicator;
-import de.dbconsult.interceptor.serial.SerialCommunication;
 
 public class ToolchangeMonitor extends AbstractWorkflow {
 
@@ -75,16 +71,16 @@ public class ToolchangeMonitor extends AbstractWorkflow {
 
     private int blockUntilUnLoaded(String toolData) {
         SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
-        SerialCommunication extra = serialsRepository.getExtra().getComm();
-        String toolMessage = toolData + ";";
+        Communication extra = serialsRepository.getExtra().getComm();
+        String toolMessage = ">" + toolData + ";";
         System.out.println("Sending to extra> " + toolData);
         WorkflowResult data = new WorkflowResult(0, null,serialsRepository.getExtra(),toolMessage.getBytes(), toolMessage.length() );
         extra.write(data);
         long start = System.currentTimeMillis();
-        String message = getMessage(extra.readFully());
+        String message = getMessage(extra.readFully("toextra"));
         while(!message.contains("ok")) {
    //         if (message.length()>3) System.out.println(">" + message);
-            message = getMessage(extra.readFully());
+            message = getMessage(extra.readFully("toextra"));
    //         if(System.currentTimeMillis()>start+1000) return 9999;
         }
         System.out.println("found ok");

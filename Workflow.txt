@@ -4,7 +4,7 @@
 #de.dbconsult.interceptor.workflow.MonitorVersionWorkflow
 #de.dbconsult.interceptor.workflow.AddOnHeartbeat
 de.dbconsult.interceptor.workflow.GUILogAndPassWorkflow
-de.dbconsult.interceptor.workflow.ToolchangeMonitor
-de.dbconsult.interceptor.workflow.MonitorCurrentPositionWorkflow
+#de.dbconsult.interceptor.workflow.ToolchangeMonitor
+#de.dbconsult.interceptor.workflow.MonitorCurrentPositionWorkflow
 #de.dbconsult.interceptor.workflow.MonitorSpindleSpeedWorkflow
 #de.dbconsult.interceptor.workflow.MonitorProbingWorkflow
