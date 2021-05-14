@@ -1,6 +1,7 @@
 #include <Servo.h>
 #include <BrightBricks.h>
 #include <RemoteStepper.h>
+#include <RemoteSwitch.h>
 
 char string[32];
 boolean fullyRead=false;
@@ -12,6 +13,7 @@ Servo probeServo;
 long highVal=0;
 BrickBus bus(10);
 RemoteStepper stepper(64);
+RemoteSwitch rswitch(10);
 bool hasConnectionFailure=false;
 
 static void errorCallback(byte device, int code) {
@@ -41,7 +43,7 @@ void setup() {
   pinMode(10,INPUT);
   pinMode(A3,OUTPUT);
 
- 
+  Serial.println("ExCtr 0.12"); 
   probeServo.attach(A3);  
   probeServo.write(120);
   pinMode(3,OUTPUT);
@@ -49,14 +51,16 @@ void setup() {
   delay(500);
   digitalWrite(3,LOW);
   bus.initialize(13,errorCallback);
+  rswitch.initialize(&bus);
   stepper.initialize(&bus);
-  stepper.setStepsPerRevolution(20);
+  /*
+  stepper.setStepsPerRevolution(200);
   stepper.setReportFunction(stepperReported);
-  stepper.setMaxSpeed(800);
+  stepper.setMaxSpeed(200);
   stepper.setReportThreshold(0);
   stepper.setAcceleration(50);
-
-  Serial.println("ExCtr 0.10");
+*/
+  Serial.println("ok");
 }
 
 void loop() {
@@ -124,15 +128,35 @@ void loop() {
         break;
       case 'i':
 //        Serial.println("init");
+        stepper.setStepsPerRevolution(200);
+        stepper.setMaxSpeed(200);
+        stepper.setReportThreshold(0);
+        stepper.setAcceleration(50);
         break;
-
+      case 'o':
+        // load, param defines slot
+      switch (param) {
+        case 1:
+          rswitch.enable5V();
+          break;
+        case 2:
+          rswitch.enableVdd();
+          break;
+        case 3:
+          rswitch.disable5V();
+          break;
+        case 4:
+          rswitch.disableVdd();
+          break;
+        }
+        break;
       case 'l':
       // load, param defines slot
-         stepper.move(1350);
+         stepper.move(1500);
          break;
       case 'r':
       // unload
-         stepper.move(-1350);
+         stepper.move(-1500);
          break;       
       case 'h':
 

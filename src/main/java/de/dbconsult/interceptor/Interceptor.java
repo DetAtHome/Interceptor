@@ -1,5 +1,7 @@
 package de.dbconsult.interceptor;
 
+import de.dbconsult.interceptor.exactposition.ExtraReader;
+import de.dbconsult.interceptor.internal.ExternalLogger;
 import de.dbconsult.interceptor.serial.SerialCommunication;
 import de.dbconsult.interceptor.workflow.internalqueue.InternalQueue;
 
@@ -50,6 +52,10 @@ public class Interceptor {
         workflowDataStore.update("lastResponse","nothin");
         workflowDataStore.update("pcQSize", 0L);
         workflowDataStore.update("millQSize", 0L);
+        workflowDataStore.update("EXTRAREADER", new ExtraReader(workflowDataStore));
+        ExternalLogger logger = new ExternalLogger(workflowDataStore);
+        Thread loggingThread = new Thread(logger);
+        loggingThread.start();
         deviationController.initialize(workflowDataStore);
 
         orchestrator = new Orchestrator(serialsRepository, workflowRepository, workflowDataStore, internalQueueMill);

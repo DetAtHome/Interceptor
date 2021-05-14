@@ -4,6 +4,7 @@ import de.dbconsult.interceptor.SerialsRepository;
 import de.dbconsult.interceptor.Workflow;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
+import de.dbconsult.interceptor.exactposition.ExtraReader;
 import de.dbconsult.interceptor.internal.UIController;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ public class GUILogAndPassWorkflow  extends AbstractWorkflow {
     private boolean questionRequestPending = false;
     private boolean g0RequestPending = false;
     private WorkflowDataStore workflowDataStore = null;
-
+    private ExtraReader extraReader = null;
     public GUILogAndPassWorkflow() {
         /*JFrame mainFrame= new JFrame();//creating instance of JFrame
         mainFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -29,7 +30,6 @@ public class GUILogAndPassWorkflow  extends AbstractWorkflow {
         String pc1 = "mill"; //(String) data[0]; //serialsRepository.getInstance().getPc().name;
         String mill = "pc"; //(String) data[1]; //SerialsRepository.getInstance().getMill().name;
         String extra = "extra"; // (String) data[2]; //SerialsRepository.getInstance().getExtra().name;
-
         logAndPass = new LogAndPassFrame(pc1,mill, extra, workflowDataStore, controller);
         logAndPass.show();
         workflowDataStore.update("UIInstance", logAndPass);
@@ -62,6 +62,7 @@ public class GUILogAndPassWorkflow  extends AbstractWorkflow {
 
 
         String message = new String(data.getOutput());
+
         if (data.getFormSource().getName().contains("mill")) {
             if(data.getLen()==1 && data.getOutput()[0]==10) {
                 setDoLog(false);

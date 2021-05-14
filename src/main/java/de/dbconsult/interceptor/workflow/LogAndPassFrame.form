@@ -222,6 +222,50 @@
                       </component>
                     </children>
                   </grid>
+                  <grid id="28a8b" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <tabbedpane title="ExtraComm"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="e3a63" class="javax.swing.JTextField" binding="txtExtraInput">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <vspacer id="883f3">
+                        <constraints>
+                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                      </vspacer>
+                      <component id="c57ba" class="javax.swing.JButton" binding="btnSendExtra">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Send To Extra"/>
+                        </properties>
+                      </component>
+                      <scrollpane id="5e5c4">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="38ce2" class="javax.swing.JTextArea" binding="txtLogOut">
+                            <constraints/>
+                            <properties/>
+                          </component>
+                        </children>
+                      </scrollpane>
+                    </children>
+                  </grid>
                   <grid id="ef6f5" layout-manager="GridBagLayout">
                     <constraints>
                       <tabbedpane title="Single Sided PCB"/>
@@ -1780,6 +1824,12 @@
                   <vspacer id="2dec0">
                     <constraints/>
                   </vspacer>
+                  <component id="17d17" class="javax.swing.JCheckBox" binding="disableHeartbeatCheckBox" default-binding="true">
+                    <constraints/>
+                    <properties>
+                      <text value="Disable Heartbeat"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
               <grid id="8ffce" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">

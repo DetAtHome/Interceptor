@@ -16,7 +16,7 @@ public class HeightSensor {
     Double machineOriginY = 0d;
 
     public HeightSensor(WorkflowDataStore workflowDataStore) {
-        extraReader = new ExtraReader(workflowDataStore);
+        extraReader =(ExtraReader) workflowDataStore.read("EXTRAREADER");
         sender = new GCodeSender(workflowDataStore);
         this.workflowDataStore = workflowDataStore;
 
