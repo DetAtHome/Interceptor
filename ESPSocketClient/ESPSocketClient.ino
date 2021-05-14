@@ -1,108 +1,110 @@
 #include <ESP8266WiFi.h>
 #include "defines.h"
-
+#include <BrightBricks.h>
+#include <RemoteStepper.h>
+#include <RemoteSwitch.h>
   
+// --------- WIFI related -------------------
 WiFiClient outgoingClient;
-WiFiClient incomingClient;
 
-WiFiServer wifiServer(6666);
 
-boolean isConnected = false;
-String serialData;
-String requestFromPC="";
-bool requestFromPCPending = false;
-bool doSend = false;
+// ---------- BrightBricks related ----------
+bool hasConnectionFailure=false;
+BrickBus bus(10);
+RemoteStepper stepper(61);
 
+// ------ Business logic --------------------
+char* commandBuffer;
+bool doSendToSerial = false;
+bool doSendToSocket = false;
+String cncData;
+String socketData;
+
+// ------ static BrightBricks callbacks
+static void errorCallback(byte device, int code) {
+  if (code==404) {
+    if (!hasConnectionFailure) {
+      outgoingClient.println(">Connection failure, this is hardly recoverable, fix it");
+      hasConnectionFailure=true;
+    }
+  } else {
+    outgoingClient.print(">ERROR: From ");
+    outgoingClient.print(device);
+    outgoingClient.print(" Code: ");
+    outgoingClient.println(code);
+  }
+}
+
+static void stepperReported(char* state) {
+  
+  outgoingClient.print(">ReportFunction called with: ");
+  outgoingClient.print(state);  
+  long stepReported = atol(state);
+  outgoingClient.print(" / ");
+  outgoingClient.println(stepReported); 
+  
+}
+// -------------------------------------------------
+
+
+// ---- business logic ----------
 void setup()
 {
-  Serial.begin(115200);
-  Serial.println();
 
-  Serial.printf("Connecting to %s ", ssid);
+  // cnc shield comm
+  Serial.begin(115200);
+  // wifi setup
   WiFi.begin(ssid, password);
-  wifiServer.begin();
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    Serial.print(".");
   }
   
   outgoingClient.setNoDelay(true);
   outgoingClient.connect(host, 9023);
+  // BrightBricks setup
+  bus.initialize(13,errorCallback);
+  commandBuffer = (char*)malloc(1024);
   
-  Serial.println("Inited");  
 }
 void loop() {
+
+  // read data from cnc shield
   if(Serial.available()>0) {
-    serialData = Serial.readStringUntil('\n');
-    doSend = true;
+    cncData = Serial.readStringUntil('\n');
+    doSendToSocket = true;
   }
-  if(doSend) {
+
+  // send out that data via socket to pc
+  if(doSendToSocket) {
       if (outgoingClient.connected()||outgoingClient.available() ) {
-        outgoingClient.println(serialData);
-        doSend=false;
+        outgoingClient.print(cncData);
+        doSendToSocket=false;
       }
   }
+
+  // read incoming from socket
   if (outgoingClient.available()>0) {
-    char c = outgoingClient.read();
-    Serial.print(c);
+    socketData = outgoingClient.readStringUntil('\n');
+    doSendToSerial = true;
+//    char c = outgoingClient.read();
+//    Serial.print(c);
+  }
+
+  // if socketData starts with '>' that data goes to brightbus
+  if(socketData.charAt(0)=='>') {
+    outgoingClient.println(">BrightBus command detected");
+    socketData="";
+    doSendToSerial = false;
+  }
+  if(doSendToSerial) {
+    Serial.print(socketData);
+    doSendToSerial = false;
+  }
+
+  if(!outgoingClient.connected()) {
+    // try to reconnect
+    outgoingClient.connect(host, 9023);
   }
 
 }
-/*
-void loop() {
-  
-  // server part: react to incoming connection data
-  WiFiClient incomingClient = wifiServer.available();
-  if (incomingClient) {
- 
-    while (incomingClient.connected()) {
-      while (incomingClient.available()>0) {
-        requestFromPC = incomingClient.readStringUntil('\n');
-        Serial.println(requestFromPC);
-        requestFromPCPending = true;
-      }
- 
-      delay(10);
-    }
-  }
-
-  // There might be some answer from Serial
-  if(Serial.available()>0) {
-    serialData = Serial.readStringUntil('\n');
-    doSend = true;
-  }
-  
-  if (doSend) {
-    
-    if (requestFromPCPending) {
-      // answer that request with whatever the mill told me      
-      incomingClient.print(serialData + "\r\n");
-      incomingClient.flush();
-      requestFromPCPending = false;
-      doSend=false;
-      // this incoming client connection has done its work
-   //   incomingClient.stop();
-    } else {
-      // connect to PC Socketserver cause I have something to tell
-      if (outgoingClient.connect(host, 9023)) {
-        outgoingClient.print(serialData); 
-        outgoingClient.flush();       
-      }
-    }
-    // deal with the answer of the PC to my request (Intercepter should always answer OK, so no big deal)
-    while (outgoingClient.connected() || outgoingClient.available())
-    {
-      if (outgoingClient.available())
-      {
-        String line = outgoingClient.readStringUntil('\n');
-        // some debug data, normally I'd say I can drop that on the floor
-        Serial.println(line);
-        // ok so I have my answer, this client has done its work
-  //      outgoingClient.stop();
-        doSend=false;
-      }
-    }
-  }
-}
-*/
