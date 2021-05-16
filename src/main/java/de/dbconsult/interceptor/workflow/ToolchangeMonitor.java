@@ -74,7 +74,7 @@ public class ToolchangeMonitor extends AbstractWorkflow {
         Communication extra = serialsRepository.getExtra().getComm();
         String toolMessage = ">" + toolData + ";";
         System.out.println("Sending to extra> " + toolData);
-        WorkflowResult data = new WorkflowResult(0, null,serialsRepository.getExtra(),toolMessage.getBytes(), toolMessage.length() );
+        WorkflowResult data = new WorkflowResult(0, null,TargetDevices.EXTRA,toolMessage.getBytes(), toolMessage.length() );
         extra.write(data);
         long start = System.currentTimeMillis();
         String message = getMessage(extra.readFully("toextra"));

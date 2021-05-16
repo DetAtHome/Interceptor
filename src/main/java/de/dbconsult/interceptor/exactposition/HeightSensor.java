@@ -116,10 +116,10 @@ public class HeightSensor {
         }
         if ("Z".equals(axis)) probeDistance = 500;
         Double changeVal = -99999d;
-        long startHeight = extraReader.readHeightFromExtra();
+        long startHeight = 0; // WIFIFIXextraReader.readHeightFromExtra();
         for (int x=0;x<2000;x++) {
             sender.miniJog(axis);
-            long newHeight = extraReader.readHeightFromExtra();
+            long newHeight = 0; // WIFIFIX extraReader.readHeightFromExtra();
 
             if(newHeight!=startHeight) {
          //   if(newHeight-startHeight>10) {

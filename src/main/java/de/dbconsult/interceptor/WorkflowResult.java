@@ -1,13 +1,13 @@
 package de.dbconsult.interceptor;
 
 public class WorkflowResult {
-    private SerialDescriptor formSource;
-    private SerialDescriptor toDestination;
+    private TargetDevices formSource;
+    private TargetDevices toDestination;
     private byte[] output;
     private int len;
     private long index;
 
-    public WorkflowResult(long index, SerialDescriptor in, SerialDescriptor out, byte[] result, int len) {
+    public WorkflowResult(long index, TargetDevices in, TargetDevices out, byte[] result, int len) {
         this.index = index;
         this.formSource = in;
         this.toDestination = out;
@@ -27,19 +27,19 @@ public class WorkflowResult {
         this.output = output;
     }
 
-    public SerialDescriptor getFormSource() {
+    public TargetDevices getFormSource() {
         return formSource;
     }
 
-    public SerialDescriptor getToDestination() {
+    public TargetDevices getToDestination() {
         return toDestination;
     }
 
-    public void setFormSource(SerialDescriptor formSource) {
+    public void setFormSource(TargetDevices formSource) {
         this.formSource = formSource;
     }
 
-    public void setToDestination(SerialDescriptor toDestination) {
+    public void setToDestination(TargetDevices toDestination) {
         this.toDestination = toDestination;
     }
 

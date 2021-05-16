@@ -1,5 +1,6 @@
 package de.dbconsult.interceptor.workflow;
 
+import de.dbconsult.interceptor.TargetDevices;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
 
@@ -21,7 +22,7 @@ public class MonitorLookAheadBuffer extends AbstractWorkflow {
             workflowDataStore.setOkFound(0);
         }
 
-        if(data.getFormSource().getName().toLowerCase().contains("pc")) {
+        if(data.getFormSource()== TargetDevices.CANDLE) {
             if(data.getLen()>1) {
                 if(getMessage(data).contains("$X")) {
                     workflowDataStore.setCommandFound(0);
@@ -31,7 +32,7 @@ public class MonitorLookAheadBuffer extends AbstractWorkflow {
                 }
             }
         }
-        if(data.getFormSource().getName().toLowerCase().contains("mill")) {
+        if(data.getFormSource()==TargetDevices.CNC) {
             if (getMessage(data).contains("ok") || getMessage(data).contains("error") ) workflowDataStore.incOkFound();
         }
         return data;

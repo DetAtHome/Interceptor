@@ -90,21 +90,21 @@ public class UIController {
             String probeZ = "G21G91G38.2Z-30F100; G0Z1; G38.2Z-2F10\n";
             String saveZMessage = "G0Z10\n";
 
-            WorkflowResult data = new WorkflowResult(0, null, serialsRepository.getMill(), homeMessage.getBytes(), homeMessage.length());
+            WorkflowResult data = new WorkflowResult(0, null, TargetDevices.CNC, homeMessage.getBytes(), homeMessage.length());
             mill.write(data);
-            data = new WorkflowResult(0, null, serialsRepository.getMill(), resetTo0Message.getBytes(), resetTo0Message.length());
+            data = new WorkflowResult(0, null, TargetDevices.CNC, resetTo0Message.getBytes(), resetTo0Message.length());
             mill.write(data);
-            data = new WorkflowResult(0, null, serialsRepository.getMill(), workHomeMessage.getBytes(), workHomeMessage.length());
+            data = new WorkflowResult(0, null, TargetDevices.CNC, workHomeMessage.getBytes(), workHomeMessage.length());
             mill.write(data);
-            data = new WorkflowResult(0, null, serialsRepository.getMill(), resetTo0Message.getBytes(), resetTo0Message.length());
+            data = new WorkflowResult(0, null, TargetDevices.CNC, resetTo0Message.getBytes(), resetTo0Message.length());
             mill.write(data);
             additionalCommunicator.switchProbingOn();
-            data = new WorkflowResult(0, null, serialsRepository.getMill(), probeZ.getBytes(), probeZ.length());
+            data = new WorkflowResult(0, null, TargetDevices.CNC, probeZ.getBytes(), probeZ.length());
             mill.write(data);
             //probingWorkflow.switchProbingOff();
-            data = new WorkflowResult(0, null, serialsRepository.getMill(), resetTo0Message.getBytes(), resetTo0Message.length());
+            data = new WorkflowResult(0, null, TargetDevices.CNC, resetTo0Message.getBytes(), resetTo0Message.length());
             mill.write(data);
-            data = new WorkflowResult(0, null, serialsRepository.getMill(), saveZMessage.getBytes(), saveZMessage.length());
+            data = new WorkflowResult(0, null, TargetDevices.CNC, saveZMessage.getBytes(), saveZMessage.length());
             mill.write(data);
             String answer = additionalCommunicator.blockUntilIdle();
             additionalCommunicator.switchProbingOff();

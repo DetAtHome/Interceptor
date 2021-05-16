@@ -25,7 +25,7 @@ public class DeviationController extends AbstractWorkflow {
         if (data.getOutput()[0]!='_') return data;
         if((boolean)workflowDataStore.read("deviationActive")) {
             if (getMessage(data).equals("?")) {
-                data.setToDestination(new SerialDescriptor(0,"ABORT", "ABORT"));
+                data.setToDestination(TargetDevices.ABORT);
             }
         }
         if(getMessage(data).startsWith("_gracefulHoldON")) {

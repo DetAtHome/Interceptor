@@ -1,5 +1,6 @@
 package de.dbconsult.interceptor.workflow;
 
+import de.dbconsult.interceptor.TargetDevices;
 import de.dbconsult.interceptor.Workflow;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
@@ -23,7 +24,7 @@ public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Wor
 
     public synchronized WorkflowResult process(WorkflowResult data) {
 
-        if (!data.getFormSource().getName().toLowerCase().contains("mill")) return data;
+        if (data.getFormSource()!= TargetDevices.CNC) return data;
 
         String message;
         message = new String(data.getOutput(), 0, data.getLen());

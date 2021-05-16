@@ -5,6 +5,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import de.dbconsult.interceptor.TargetDevices;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
 import de.dbconsult.interceptor.exactheight.MaskZMainController;
@@ -367,7 +368,7 @@ public class LogAndPassFrame {
         if (stringTableModel.getRowCount() > 0) {
             if (Long.parseLong((String) stringTableModel.getValueAt(stringTableModel.getRowCount() - 1, 0)) == wfData.getIndex()) {
                 if (((String) stringTableModel.getValueAt(stringTableModel.getRowCount() - 1, 1)).isEmpty()) {
-                    if (wfData.getFormSource().getName().toLowerCase().contains("pc")) {
+                    if (wfData.getFormSource()== TargetDevices.CANDLE) {
                         stringTableModel.setValueAt(new String(wfData.getOutput()), stringTableModel.getRowCount() - 1, 1);
                         String hexView = toHexString(wfData.getOutput());
                         hexTableModel.setValueAt(hexView, stringTableModel.getRowCount() - 1, 1);
@@ -375,7 +376,7 @@ public class LogAndPassFrame {
                     }
                 }
                 if (((String) stringTableModel.getValueAt(stringTableModel.getRowCount() - 1, 2)).isEmpty()) {
-                    if (wfData.getFormSource().getName().toLowerCase().contains("mill")) {
+                    if (wfData.getFormSource()==TargetDevices.CNC) {
                         stringTableModel.setValueAt(new String(wfData.getOutput()), stringTableModel.getRowCount() - 1, 2);
                         String hexView = toHexString(wfData.getOutput());
                         hexTableModel.setValueAt(hexView, stringTableModel.getRowCount() - 1, 2);
@@ -384,7 +385,7 @@ public class LogAndPassFrame {
                 }
             }
         }
-        if (wfData.getFormSource().getName().contains("pc")) {
+        if (wfData.getFormSource()==TargetDevices.CANDLE) {
             stringRow = new String[]{"" + wfData.getIndex(), new String(wfData.getOutput()), ""};
             hexRow = new String[]{"" + wfData.getIndex(), toHexString(wfData.getOutput()), ""};
 

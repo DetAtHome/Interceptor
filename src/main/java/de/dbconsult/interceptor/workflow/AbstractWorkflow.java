@@ -1,5 +1,6 @@
 package de.dbconsult.interceptor.workflow;
 
+import de.dbconsult.interceptor.TargetDevices;
 import de.dbconsult.interceptor.Workflow;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
@@ -28,11 +29,11 @@ public abstract class AbstractWorkflow implements Workflow {
     }
 
     protected boolean isMill(WorkflowResult data) {
-        return data.getFormSource().getName().toLowerCase().contains("mill");
+        return data.getFormSource()== TargetDevices.CNC;
     }
 
     protected boolean isPC(WorkflowResult data) {
-        return data.getFormSource().getName().toLowerCase().contains("pc");
+        return data.getFormSource()==TargetDevices.CANDLE;
     }
 
 }

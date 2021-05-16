@@ -1,6 +1,7 @@
 package de.dbconsult.interceptor.workflow;
 
 import com.pi4j.io.gpio.*;
+import de.dbconsult.interceptor.TargetDevices;
 import de.dbconsult.interceptor.Workflow;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
@@ -25,7 +26,7 @@ public class ControlSpindle implements Workflow {
 
     @Override
     public synchronized WorkflowResult process(WorkflowResult data) {
-        if (!data.getFormSource().getName().equalsIgnoreCase("pc")) {
+        if (data.getFormSource()!=TargetDevices.CANDLE) {
             return data;
         }
 

@@ -1,9 +1,6 @@
 package de.dbconsult.interceptor.workflow;
 
-import de.dbconsult.interceptor.Communication;
-import de.dbconsult.interceptor.SerialsRepository;
-import de.dbconsult.interceptor.WorkflowDataStore;
-import de.dbconsult.interceptor.WorkflowResult;
+import de.dbconsult.interceptor.*;
 
 public class AddOnHeartbeat extends AbstractWorkflow {
 
@@ -38,8 +35,8 @@ public class AddOnHeartbeat extends AbstractWorkflow {
     private String sendHeartbeat() {
         SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
         Communication extra = serialsRepository.getExtra().getComm();
-        String pingMessage = ">?1;";
-        WorkflowResult data = new WorkflowResult(0, null,serialsRepository.getExtra(),pingMessage.getBytes(), pingMessage.length() );
+        String pingMessage = "#?1;\r";
+        WorkflowResult data = new WorkflowResult(0, null, TargetDevices.EXTRA,pingMessage.getBytes(), pingMessage.length() );
         extra.write(data);
         long start = System.currentTimeMillis();
         String message = getMessage(extra.readFully("toextra"));

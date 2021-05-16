@@ -1,5 +1,6 @@
 package de.dbconsult.interceptor;
 
+import com.fazecast.jSerialComm.SerialPort;
 import de.dbconsult.interceptor.exactposition.ExtraReader;
 import de.dbconsult.interceptor.internal.ExternalLogger;
 import de.dbconsult.interceptor.serial.SerialCommunication;
@@ -29,14 +30,18 @@ public class Interceptor {
 
 
         isTest = args[0].startsWith("test");
-        SerialDescriptor[] serials = parseArguments(args);
+        SerialPort comPort=null;
 
         try {
-            setupSerials(serials);
+            comPort = setupSerial(args[0]);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        workflowDataStore.update("SerialsRepository", serialsRepository);
+
+        WifiCommunication communication = WifiCommunication.getInstance();
+        communication.setComPort(comPort);
+
         System.out.println("Configured workflow chain: ");
 
         try {
@@ -57,150 +62,53 @@ public class Interceptor {
         ExternalLogger logger = new ExternalLogger(workflowDataStore);
         Thread loggingThread = new Thread(logger);
         loggingThread.start();
-        deviationController.initialize(workflowDataStore);
 
         orchestrator = new Orchestrator(serialsRepository, workflowRepository, workflowDataStore, internalQueueMill);
         counter = 0;
+        // from now on all listener threads are active
+        communication.startCommunication(orchestrator);
         while (true) {
-            if (workflowDataStore.read("ZMaskInProgress")!=null) continue;
-            if (workflowDataStore.read("EdgeFindInProgress")!=null) continue;
-            counter++;
-            deviationActive = ((boolean)workflowDataStore.read("deviationActive"));
-
-            // get from 1
-            WorkflowResult request = null;
-            request = readFromUI();
-            request = deviationController.process(request);
-            if (internalQueuePC.size() > 0 && !deviationActive) {
-                request = readFromQueue(true);
-                System.out.print("sending from internal pc q: " + new String(request.getOutput()) + " new size: " + internalQueuePC.size());
+            // Wait and parse forever, and ever and ever...
+            try {
+                // But let the threads breathe
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            if (request==null || request.getLen() == 0) {
-                request = readFrom(true, isTest);
-            }
-            // enqueue
-            if (request.getLen() > 0) {
-                if ((boolean)workflowDataStore.read("deviationActive")) {
-                    internalQueuePC.enqueue(request);
-                    workflowDataStore.update("pcQSize", internalQueuePC.size());
-                    System.out.println("stored to internal pc q: " + new String(request.getOutput()) + " size is now" + internalQueuePC.size());
-                } else {
-                    request = orchestrator.enqueueToWorkflow(request);
-                    if(!request.getToDestination().getName().equals("ABORT")) writeRequest(request, isTest);
-                }
-            }
-            // get from 2
-            WorkflowResult response;
-
-            if(internalQueueMill.size()>0 && !deviationActive) {
-                response = readFromQueue(false);
-                System.out.print("sending from internal mill q: " + new String(response.getOutput()) + " new size: " + internalQueueMill.size());
-
-            } else {
-                response = readFrom(false, isTest);
-            }
-            // enqueue
-            if (response.getLen() > 0) {
-                if (deviationActive) {
-                    internalQueueMill.enqueue(response);
-                    workflowDataStore.update("millQSize", internalQueueMill.size());
-                    System.out.println("stored to internal mill q: " + new String(response.getOutput()) + " size is now" + internalQueueMill.size());
-
-                } else {
-                    response = orchestrator.enqueueToWorkflow(response);
-                    writeRequest(response, isTest);
-                }
-            }
-
         }
-    }
-
-    private static SerialDescriptor[] parseArguments(String[] args) {
-        if (args == null || args.length < 6 || args.length % 2 != 0) {
-            System.out.println("USAGE: ... serialPCName serial1Port serialMillName serial2Port serialExtraName serial3Port");
-            System.exit(-1);
-        }
-        SerialDescriptor[] result = new SerialDescriptor[args.length / 2];
-        for (int index = 0; index < args.length; index += 2) {
-            SerialDescriptor serial = new SerialDescriptor(index / 2 + 1, args[index], args[index + 1]);
-            result[index / 2] = serial;
-        }
-        return result;
-    }
-
-    private static void setupSerials(SerialDescriptor[] serials) throws Exception {
-        Communication com1 = null;
-        Communication com2 = null;
-        Communication com3 = null;
-        if(!serials[0].getPortName().equals("WIFI"))
-            com1 = new SerialCommunication(serials[0].getName(), serials[0].getPortName(), 115200, 10);
-        else
-            com1 = WifiCommunication.getInstance();
-        if(!serials[1].getPortName().equals("WIFI"))
-            com2 = new SerialCommunication(serials[1].getName(), serials[1].getPortName(), 115200, 10);
-        else
-            com2 = WifiCommunication.getInstance();
-
-        if(!serials[2].getPortName().equals("WIFI"))
-            com3 = new SerialCommunication(serials[2].getName(), serials[2].getPortName(), 115200, 10);
-        else
-            com3 = WifiCommunication.getInstance();
-
-        serials[0].setComm(com1);
-        serials[1].setComm(com2);
-        serials[2].setComm(com3);
-        serialsRepository.setPc(serials[0]);
-        serialsRepository.setMill(serials[1]);
-        serialsRepository.setExtra(serials[2]);
 
     }
 
-    private static WorkflowResult readFrom(boolean isPc, boolean isTest) {
-        WorkflowResult request = null;
-        if (isTest) {
-            time = System.currentTimeMillis();
-            request = new WorkflowResult(0, null, null, "".getBytes(),0);
-            request.setOutput((counter + " - " + System.currentTimeMillis()).getBytes());
-            request.setLen(request.getOutput().length);
-            while (System.currentTimeMillis() - time < DELAY) {
-            }
-        } else {
-            if (isPc)
-                request = serialsRepository.getPc().getComm().readFully("tomill");
-            else
-                request = serialsRepository.getMill().getComm().readFully("tomill");
+
+
+    private static SerialPort setupSerial(String portName) throws Exception {
+        SerialPort port;
+        int portIndex = determineComPortIndex(portName);
+        if (portIndex < 0) {
+            throw new RuntimeException("Cannot determine port " + portName);
         }
-        if (isPc) {
-            request.setFormSource(serialsRepository.getPc());
-            request.setToDestination(serialsRepository.getMill());
-        } else {
-            request.setFormSource(serialsRepository.getMill());
-            request.setToDestination(serialsRepository.getPc());
+
+        port = SerialPort.getCommPorts()[portIndex];
+        port.setBaudRate(115200);
+
+        if (!port.openPort(1, 42, 1024)) {
+            throw new RuntimeException("Could not open " + portName);
         }
-        return request;
+        port.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 10, 0);
+        return port;
+
     }
 
-    private static WorkflowResult readFromQueue(boolean isPc) {
-        WorkflowResult result;
-
-
-        if (isPc) {
-            result = internalQueuePC.dequeue();
-            workflowDataStore.update("pcQSize", internalQueuePC.size());
-            result.setFormSource(serialsRepository.getPc());
-            result.setToDestination(serialsRepository.getMill());
-        } else {
-
-            result = internalQueueMill.dequeue();
-            workflowDataStore.update("millQSize", internalQueueMill.size());
-            result.setFormSource(serialsRepository.getMill());
-            result.setToDestination(serialsRepository.getPc());
+    private static int determineComPortIndex(String portName) {
+        for(int index=0; index < SerialPort.getCommPorts().length; index++) {
+            if (SerialPort.getCommPorts()[index].getDescriptivePortName().toLowerCase().contains(portName.toLowerCase())) return index;
         }
-        return result;
+        return -1;
+
     }
 
     private static WorkflowResult readFromUI() {
-        WorkflowResult result = new WorkflowResult(0,serialsRepository.getPc(),serialsRepository.getMill(), "".getBytes(),0);
+        WorkflowResult result = new WorkflowResult(0,TargetDevices.CANDLE,TargetDevices.CNC, "".getBytes(),0);
         if ((boolean) workflowDataStore.read("doGracefulHold")) {
             System.out.println("Setting _gracefulHoldON");
             result.setOutput("_gracefulHoldON\n".getBytes());
@@ -216,9 +124,4 @@ public class Interceptor {
         return result;
     }
 
-    private static void writeRequest(WorkflowResult result, boolean isTest) {
-
-        if(!isTest) result.getToDestination().getComm().write(result);
-
-    }
 }

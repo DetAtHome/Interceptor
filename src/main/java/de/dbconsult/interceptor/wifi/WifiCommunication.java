@@ -2,12 +2,13 @@ package de.dbconsult.interceptor.wifi;
 
 import com.fazecast.jSerialComm.SerialPort;
 import de.dbconsult.interceptor.Communication;
+import de.dbconsult.interceptor.Orchestrator;
+import de.dbconsult.interceptor.TargetDevices;
 import de.dbconsult.interceptor.WorkflowResult;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class WifiCommunication implements Communication {
     private ServerSocket listener = null;
@@ -18,6 +19,7 @@ public class WifiCommunication implements Communication {
     String toMillBuffer = "";
     String toCandleBuffer = "";
     String toExtraBuffer = "";
+    private Orchestrator orchestrator;
 
     static SerialPort comPort;
 
@@ -37,6 +39,7 @@ public class WifiCommunication implements Communication {
         comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 10, 0);
         System.out.println("have port");
         WifiCommunication communication = WifiCommunication.getInstance();
+        communication.startCommunication(null);
         System.out.println("waiting forever");
         while (true) {
             if(!communication.isConnected()) {
@@ -44,6 +47,10 @@ public class WifiCommunication implements Communication {
             }
 
         }
+    }
+
+    public void setComPort(SerialPort port) {
+        comPort = port;
     }
 
     private static int determineComPortIndex(String portName) {
@@ -65,96 +72,111 @@ public class WifiCommunication implements Communication {
         try {
             listener = new ServerSocket(9023);
             setupSocket();
-            Thread listenToSocket = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    readFromMillOrExtra();
-                }
-            } );
-            listenToSocket.start();
-            /* comment this in if running from main, not needed in interceptor environment */
-
-            Thread listenToComm = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    readFromCandle();
-                }
-            } );
-            listenToComm.start();
-            Thread dispatchRequestFromCandle = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    readAndDispatchIncomingCandle();
-                }
-            });
-            dispatchRequestFromCandle.start();
-
-            Thread dispatchAnythingFromCNC = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    readAndDispatchIncomingCNC();
-                }
-            });
-            dispatchAnythingFromCNC.start();
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /*Read and Dispatch should go into the interceptor main, here for testing */
+    public void startCommunication(Orchestrator orchestrator) {
+        Thread listenToSocket = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                readFromMillOrExtra();
+            }
+        } );
+        listenToSocket.start();
+        /* comment this in if running from main, not needed in interceptor environment */
+
+        Thread listenToComm = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                readFromCandle();
+            }
+        } );
+        listenToComm.start();
+        Thread dispatchRequestFromCandle = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                readAndDispatchIncomingCandle(orchestrator);
+            }
+        });
+        dispatchRequestFromCandle.start();
+
+        Thread dispatchAnythingFromCNC = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                readAndDispatchIncomingCNC(orchestrator);
+            }
+        });
+        dispatchAnythingFromCNC.start();
+
+    }
+
     public void readAndDispatchIncomingExtra() {
         //tbd
     }
-    public void readAndDispatchIncomingCNC() {
+    public void readAndDispatchIncomingCNC(Orchestrator orchestrator) {
         while(true) {
             System.out.println("Reading fully from Mill to Candle");
             WorkflowResult toCandle = readFully("tocandle");
+            toCandle.setFormSource(TargetDevices.CNC);
+            toCandle.setToDestination(TargetDevices.CANDLE);
             System.out.println("Got something for candle");
-            // do somthing with it if appropriate (orchestrator)
-            // but for now: send it where it belongs
-            try {
-                comPort.writeBytes(toCandle.getOutput(), toCandle.getLen());
-                comPort.writeBytes(new byte[] {10,13},2);
-                System.out.println("sent to candle:" + new String(toCandle.getOutput()));
-                System.out.println("Len was: " + toCandle.getLen());
-      //          Thread.sleep(10);
-            } catch (Exception e) {
-                e.printStackTrace();
+            WorkflowResult afterWorkflows = orchestrator.enqueueToWorkflow(toCandle);
+            if(afterWorkflows.getToDestination()!=TargetDevices.ABORT) {
+                writeToSerial(afterWorkflows);
             }
         }
     }
-    public void readAndDispatchIncomingCandle() {
+
+    private void writeToSerial(WorkflowResult toCandle) {
+        try {
+            comPort.writeBytes(toCandle.getOutput(), toCandle.getLen());
+            comPort.writeBytes(new byte[] {10,13},2);
+            System.out.println("sent to candle:" + new String(toCandle.getOutput()));
+            System.out.println("Len was: " + toCandle.getLen());
+            //          Thread.sleep(10);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    public void readAndDispatchIncomingCandle(Orchestrator orchestrator) {
         while(true) {
             System.out.println("Read fully from Candle to Mill");
             WorkflowResult toMill = readFully("tomill");
+            toMill.setFormSource(TargetDevices.CANDLE);
+            toMill.setToDestination(TargetDevices.CNC);
+            WorkflowResult afterWorkflows = orchestrator.enqueueToWorkflow(toMill);
             System.out.println("Got something to send to mill");
-
-            // do somthing with it if appropriate (orchestrator)
-            // but for now: send it where it belongs
-            char[] outData = new char[toMill.getLen()];
-            for (int i = 0; i < toMill.getLen(); i++) {
-                outData[i] = (char) toMill.getOutput()[i];
-            }
-            try {
-
-                outToSocket.write(outData);
-                outToSocket.flush();
-                if(outData[0]==24) {
-                    System.out.println("Sent CtrlX to mill");
-                } else {
-                    System.out.println("Sent to mill:" + new String(outData));
-                    System.out.println("length was btw: " + outData.length);
-                }
-    //            Thread.sleep(10);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (afterWorkflows.getToDestination()!=TargetDevices.ABORT) {
+                writeToSocket(afterWorkflows);
             }
         }
 
     }
 
+    private void writeToSocket(WorkflowResult toMill) {
+        char[] outData = new char[toMill.getLen()];
+        for (int i = 0; i < toMill.getLen(); i++) {
+            outData[i] = (char) toMill.getOutput()[i];
+        }
+        try {
+
+            outToSocket.write(outData);
+            outToSocket.flush();
+            if(outData[0]==24) {
+                System.out.println("Sent CtrlX to mill");
+            } else {
+                System.out.println("Sent to mill:" + new String(outData));
+                System.out.println("length was btw: " + outData.length);
+            }
+            //            Thread.sleep(10);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     public void write(String grbl) {
         try {
 

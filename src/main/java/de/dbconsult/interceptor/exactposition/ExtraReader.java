@@ -14,17 +14,15 @@ public class ExtraReader {
 
     WorkflowDataStore workflowDataStore;
     private ArrayList<String> lastLine = new ArrayList<>();
-    Communication extra = null;
 
     long logLine=0;
 
     public ExtraReader(WorkflowDataStore workflowDataStore) {
-
         this.workflowDataStore = workflowDataStore;
-        extra = getCommDescription();
     }
 
     public void initializeHeight() {
+ /* WIFIFIX
         extra.write("h;");
         String answer = "";
         readingPaused = true;
@@ -62,14 +60,17 @@ public class ExtraReader {
         }
 
         return returnVal;
+
+  */
     }
 
     public void send(String toSend) {
-        if(null!=toSend) extra.write(toSend);
+//WIFIFIX        if(null!=toSend) extra.write(toSend);
     }
 
     public String getLastLog(boolean excludeHeartbeat) {
         String bufferdLines = "";
+/* WIFIIX
         if(!readingPaused) {
             WorkflowResult result =extra.readFully("toextra");
             String answer = new String(result.getOutput(),0,result.getLen());
@@ -86,12 +87,9 @@ public class ExtraReader {
         }
 
         lastLine.clear();
+*/
 
         return bufferdLines;
     }
-    private Communication getCommDescription() {
-        SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
-        Communication toComm = serialsRepository.getExtra().getComm();
-        return toComm;
-    }
+
 }

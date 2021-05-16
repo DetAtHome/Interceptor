@@ -12,12 +12,12 @@ public class AdditionalCommunicator {
 
 
     public String blockUntilIdle() {
-        Communication mill = getCommDescrption("mill").getComm();
+//WIFIFIX        Communication mill = getCommDescrption("mill").getComm();
         String answer = "";
 
         while(!answer.toLowerCase().contains("idle")) {
-            mill.write("?");
-            answer=new String(mill.readFully("tomill").getOutput());
+//WIFIFIX            mill.write("?");
+//WIFIFIX            answer=new String(mill.readFully("tomill").getOutput());
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
@@ -28,11 +28,11 @@ public class AdditionalCommunicator {
     }
 
     public String blockUntilOk() {
-        Communication mill = getCommDescrption("mill").getComm();
+//WIFIFIX        Communication mill = getCommDescrption("mill").getComm();
         String answer = "";
 
         while(!answer.toLowerCase().contains("ok")) {
-            answer=new String(mill.readFully("tomill").getOutput());
+//WIFIFIX            answer=new String(mill.readFully("tomill").getOutput());
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
@@ -43,44 +43,28 @@ public class AdditionalCommunicator {
     }
 
     public void directWrite(String to, String data) {
-        Communication toComm = getCommDescrption(to).getComm();
-        toComm.write(data);
+// WIFIFIX        toComm.write(data);
     }
 
     public void switchProbingOff() {
-        switchProbing(">p0;");
+        switchProbing("#p0;\r");
     }
 
     public void switchProbingOn() {
-        switchProbing(">p1;");
+        switchProbing("#p1;\r");
     }
 
     public void setSpindleSpeed(double speed) {
-        SerialDescriptor extra = getCommDescrption("extra");
         int intSpeed = ((Double)speed).intValue();
-        String strData = ">s" + intSpeed + ";";
-        WorkflowResult data = new WorkflowResult(0, null,extra,strData.getBytes(), strData.length() );
-        extra.getComm().write(data);
+        String strData = "#s" + intSpeed + ";\r";
+        WorkflowResult data = new WorkflowResult(0, null,TargetDevices.EXTRA,strData.getBytes(), strData.length() );
+ // WIFIFIX       extra.getComm().write(data);
     }
 
     private void switchProbing(String onOff) {
-        SerialDescriptor extra = getCommDescrption("extra");
-        WorkflowResult data = new WorkflowResult(0, null,extra,onOff.getBytes(), onOff.length() );
-        extra.getComm().write(data);
+        WorkflowResult data = new WorkflowResult(0, null,TargetDevices.EXTRA,onOff.getBytes(), onOff.length() );
+ // WIFIFIX       extra.getComm().write(data);
     }
 
-    private SerialDescriptor getCommDescrption(String from) {
-        SerialsRepository serialsRepository = (SerialsRepository) workflowDataStore.read("SerialsRepository");
-        SerialDescriptor extra = null;
-        if("mill".equals(from)) {
-            extra = serialsRepository.getMill();
-        } else if("pc".equals(from)) {
-            extra = serialsRepository.getPc();
-        } else if("extra".equals(from)) {
-            extra = serialsRepository.getExtra();
-        } else {
-            throw new RuntimeException("Unknown device '" + from + "'");
-        }
-        return extra;
-    }
+
 }

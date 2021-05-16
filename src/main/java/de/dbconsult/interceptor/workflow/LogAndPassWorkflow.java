@@ -18,7 +18,7 @@ public class LogAndPassWorkflow implements Workflow {
         byte[] rawdata = data.getOutput();
 
         System.out.print("----------------");
-        System.out.print("   From " + data.getFormSource().getName());
+        System.out.print("   From " + data.getFormSource().name());
         System.out.println("   ----------------");
         for (int index=0;index<rawLen;index++) {
             System.out.print(rawdata[index] + ",");

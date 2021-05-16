@@ -23,7 +23,7 @@ public class Orchestrator {
 
         for (Workflow flow : workflowRepository.getConfiguredWorkflows()) {
             start = flow.process(start);
-            if(start.getToDestination().getName().equals("ABORT")) return start;
+            if(start.getToDestination().equals(TargetDevices.ABORT)) return start;
         }
         return start;
 

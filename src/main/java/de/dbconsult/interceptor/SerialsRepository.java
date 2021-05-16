@@ -6,16 +6,7 @@ public class SerialsRepository {
     private SerialDescriptor pc;
     private SerialDescriptor extra;
 
-    public SerialDescriptor getSerialById(int id) {
-        if (id ==0) {
-            return new SerialDescriptor(0,"Swallow", "dev0");
-        } else if(id==1) {
-            return pc;
-        } else if(id==2) {
-            return mill;
-        }
-        return new SerialDescriptor(255,"ERROR", "dev0");
-    }
+
 
 
     public SerialDescriptor getMill() {

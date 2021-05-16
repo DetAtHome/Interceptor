@@ -1,9 +1,6 @@
 package de.dbconsult.interceptor.workflow;
 
-import de.dbconsult.interceptor.SerialsRepository;
-import de.dbconsult.interceptor.Workflow;
-import de.dbconsult.interceptor.WorkflowDataStore;
-import de.dbconsult.interceptor.WorkflowResult;
+import de.dbconsult.interceptor.*;
 import de.dbconsult.interceptor.exactposition.ExtraReader;
 import de.dbconsult.interceptor.internal.UIController;
 
@@ -63,7 +60,7 @@ public class GUILogAndPassWorkflow  extends AbstractWorkflow {
 
         String message = new String(data.getOutput());
 
-        if (data.getFormSource().getName().contains("mill")) {
+        if (data.getFormSource()== TargetDevices.CNC) {
             if(data.getLen()==1 && data.getOutput()[0]==10) {
                 setDoLog(false);
             }
