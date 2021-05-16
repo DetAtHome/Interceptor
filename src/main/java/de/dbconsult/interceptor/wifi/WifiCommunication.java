@@ -3,7 +3,6 @@ package de.dbconsult.interceptor.wifi;
 import com.fazecast.jSerialComm.SerialPort;
 import de.dbconsult.interceptor.Communication;
 import de.dbconsult.interceptor.WorkflowResult;
-import org.jdom.output.EscapeStrategy;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -13,23 +12,14 @@ import java.util.ArrayList;
 public class WifiCommunication implements Communication {
     private ServerSocket listener = null;
     private Socket socket = null;
-    private BufferedReader in = null;
-    private BufferedWriter out = null;
-    private ArrayList<String> answerBuffer = new ArrayList<>();
+    private BufferedReader inFromSocket = null;
+    private BufferedWriter outToSocket = null;
     private static WifiCommunication instance = null;
-    byte[] outMillBuffer = new byte[1024];
-    byte[] outExtraBuffer = new byte[1024];
-    PipedInputStream toCandleReadStream = new PipedInputStream();
-    PipedInputStream toMillReadStream = new PipedInputStream();
-    PipedInputStream toExtraReadStream = new PipedInputStream();
-    PipedOutputStream toCandlePipedOutStream = null;
-    PipedOutputStream toMillPipedOutStream = null;
-    PipedOutputStream toExtraPipedOutStream = null;
-    ByteArrayOutputStream toCandleOut = new ByteArrayOutputStream(1024);
-    ByteArrayOutputStream toExtraOut = new ByteArrayOutputStream(1024);
+    String toMillBuffer = "";
+    String toCandleBuffer = "";
+    String toExtraBuffer = "";
+
     static SerialPort comPort;
-    private char[] dataFromMill = new char[1];
-    private byte[] dataFromCandle = new byte[1];
 
     public static void main(String[] args) throws Exception {
         String portName = "com6";
@@ -53,12 +43,6 @@ public class WifiCommunication implements Communication {
                 communication.setupSocket();
             }
 
-            // the threads will take care...
-
-//            WorkflowResult answer = communication.readFully();
-//            System.out.println(new String(answer.getOutput()));
-//            communication.writeToCandle(answer);
-//            System.out.println(new String(communication.readFully(true).getOutput()));
         }
     }
 
@@ -79,15 +63,12 @@ public class WifiCommunication implements Communication {
 
     private WifiCommunication() {
         try {
-            toCandlePipedOutStream = new PipedOutputStream(toCandleReadStream);
-            toMillPipedOutStream = new PipedOutputStream(toMillReadStream);
-            toExtraPipedOutStream = new PipedOutputStream(toExtraReadStream);
             listener = new ServerSocket(9023);
             setupSocket();
             Thread listenToSocket = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    readFromMill();
+                    readFromMillOrExtra();
                 }
             } );
             listenToSocket.start();
@@ -122,6 +103,7 @@ public class WifiCommunication implements Communication {
         }
     }
 
+    /*Read and Dispatch should go into the interceptor main, here for testing */
     public void readAndDispatchIncomingExtra() {
         //tbd
     }
@@ -157,8 +139,8 @@ public class WifiCommunication implements Communication {
             }
             try {
 
-                out.write(outData);
-                out.flush();
+                outToSocket.write(outData);
+                outToSocket.flush();
                 if(outData[0]==24) {
                     System.out.println("Sent CtrlX to mill");
                 } else {
@@ -178,8 +160,8 @@ public class WifiCommunication implements Communication {
 
         //    out.write(grbl + "\r\n");
         //    out.write(grbl + "\r");
-            out.write(grbl);
-            out.flush();
+            outToSocket.write(grbl);
+            outToSocket.flush();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,58 +169,86 @@ public class WifiCommunication implements Communication {
 
     }
 
-    /*
-    TAKE EXTREME CARE!!!!
-    readFully is blocking!!
-    That means: No answers from cnc will be passed while waiting for a BrightBricks response and vice
-    versa. It does not have to be this way when exposing the piped streams and simply signaling a cr
-    but rest of the code is not working this way. This would be a complete rewrite. Hmmmm.
-     */
     public WorkflowResult readFully(String channel) {
         WorkflowResult data = new WorkflowResult(0, null, null, "".getBytes(), 0);
         String payload="";
-        char c=0;
-        try {
-            while (true) {
-                String info = "none";
-                if ("toextra".equalsIgnoreCase(channel)) {
-                    c = (char) toExtraReadStream.read();
-                } else if("tocandle".equalsIgnoreCase(channel)) {
-                    c = (char) toCandleReadStream.read();
-                    info = "toCandle: " + c;
-                } else if("tomill".equalsIgnoreCase(channel)) {
-                    c = (char) toMillReadStream.read();
-                    // do not wait for cr in those cases a cr will not be sent
-                    // CtrlX (=24), ?, ! and ~
-                    info = "toMill: " + c;
-                    if (c == 24 ||c == '?' || c == '!' || c == '~') {
-                        payload= "" + c;
-                        break;
-                    }
-                } else {
-                    throw new RuntimeException("unknown channel: " + channel );
-                }
-                payload = payload + c;
-      //          Thread.sleep(1);
-                if(c==13) break;
+        char cr=13;
+        int index = -1;
+        // find 1st complete command or answer
+        while((index=indexOfCRorPushCommand(payload))<0) {
+   //         System.out.println("Payload: " + payload + " length: " + payload.length() + " channel " + channel);
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            System.out.println("payload is " + payload);
+            if ("toextra".equalsIgnoreCase(channel)) {
+                payload = toExtraBuffer;
+            } else if ("tocandle".equalsIgnoreCase(channel)) {
+                payload = toCandleBuffer;
+            } else if ("tomill".equalsIgnoreCase(channel)) {
+                payload = toMillBuffer;
+            }
+        }
+
+        if ("toextra".equalsIgnoreCase(channel)) {
+            payload = toExtraBuffer.substring(0,index+1);
+            toExtraBuffer = toExtraBuffer.substring(index+1);
+        } else if ("tocandle".equalsIgnoreCase(channel)) {
+            payload = toCandleBuffer.substring(0,index+1);
+            toCandleBuffer = toCandleBuffer.substring(index+1);
+        } else if ("tomill".equalsIgnoreCase(channel)) {
+            payload = toMillBuffer.substring(0,index+1);
+            toMillBuffer = toMillBuffer.substring(index+1);
+        }
+
+
+            System.out.println("payload is " + payload + " length: " + payload.length());
 
             data.setOutput(payload.getBytes());
             data.setLen(payload.length());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         return data;
     }
 
+    private int indexOfCRorPushCommand(String data) {
+        int indexCR = -1;
+        int indexQst = -1;
+        int indexBang = -1;
+        int indexTild = -1;
+        int indexCtrlX = -1;
+
+        int minFoundIndex = 99999;
+        char cr = 13;
+        char ctrlx = 24;
+        char qst = '?';
+        char bang = '!';
+        char tlde = '~';
+
+        indexCR = data.indexOf(cr);
+        indexQst = data.indexOf(qst);
+        indexBang = data.indexOf(bang);
+        indexTild = data.indexOf(tlde);
+        indexCtrlX = data.indexOf(ctrlx);
+
+
+        if (indexCR>-1) minFoundIndex = indexCR;
+        if (indexQst>-1 && indexQst<minFoundIndex) minFoundIndex = indexQst;
+        if (indexBang>-1 && indexBang<minFoundIndex) minFoundIndex = indexBang;
+        if (indexTild>-1 && indexTild<minFoundIndex) minFoundIndex = indexTild;
+        if (indexCtrlX>-1 && indexCtrlX<minFoundIndex) minFoundIndex = indexCtrlX;
+
+        if(minFoundIndex==99999) minFoundIndex=-1;
+        return minFoundIndex;
+
+
+    }
+
+
     @Override
     public void write(WorkflowResult data) {
-        if (data.getLen()>-1) {
-            write(new String(data.getOutput()));
-        }
+
     }
 
     public void writeToCandle(WorkflowResult data) {
@@ -252,8 +262,8 @@ public class WifiCommunication implements Communication {
         try {
             socket = listener.accept();
             socket.setKeepAlive(true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            inFromSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            outToSocket = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -264,7 +274,8 @@ public class WifiCommunication implements Communication {
         return socket.isConnected();
     }
 
-    public void readFromMill() {
+    public void readFromMillOrExtra() {
+        char[] dataFromMill = new char[1];
         try {
             boolean extraDetected=false;
 
@@ -273,24 +284,19 @@ public class WifiCommunication implements Communication {
                 if(!isConnected()) {
                     setupSocket();
                 }
-               if(in.read(dataFromMill,0,1)>0) {
-                    byte[] outAsByte = new byte[1];
-                    outAsByte[0] = (byte) dataFromMill[0];
-                    if(outAsByte[0]=='#') {
+               if(inFromSocket.read(dataFromMill,0,1)>0) {
+                    if(dataFromMill[0]=='#') {
                         extraDetected=true;
                     }
                     if(extraDetected) {
-                        toExtraPipedOutStream.write(outAsByte);
+                        toExtraBuffer = toExtraBuffer + dataFromMill[0];
                     } else {
-                        toCandlePipedOutStream.write(outAsByte);
+                        toCandleBuffer = toCandleBuffer + dataFromMill[0];
                     }
-                    if(extraDetected && outAsByte[0]==13) {
+                    // Convention for now and always> Extra starts with # and ends with CR (no LF involved)
+                    if(extraDetected && dataFromMill[0]==13) {
                         extraDetected=false;
                     }
-//                    char c = new Character(dataFromMill[0]);
-//                    System.out.print(c);
-//                    toCandleOut.write(outAsByte);
-    //                comPort.writeBytes(outAsByte,1);
                 }
 
             }
@@ -299,25 +305,14 @@ public class WifiCommunication implements Communication {
         }
     }
 
-/* This is here for testing purposes if main is needed */
-
     public void readFromCandle() {
         try {
             while (true) {
                 byte[] outAsByte = new byte[1];
                 if(comPort.readBytes(outAsByte,1)>0) {
-                    toMillPipedOutStream.write(outAsByte);
+                    toMillBuffer = toMillBuffer + (char)outAsByte[0];
                 }
-/*
-                if(comPort.readBytes(dataFromCandle,1)>0) {
-                    char[] outAsChar = new char[1];
-                    outAsChar[0] = (char)dataFromCandle[0];
-                    char c = new Character(outAsChar[0]);
- //                   System.out.print("'" + c);
-                    out.write(dataFromCandle[0]);
-                    out.flush();
-                }
-*/
+
             }
         } catch (Exception e) {
             e.printStackTrace();
