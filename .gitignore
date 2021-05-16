@@ -4,3 +4,4 @@ build/
 gradle/
 out/
 ESPSocketClient/defines.h
+ESPSocketClientV2/defines.h
