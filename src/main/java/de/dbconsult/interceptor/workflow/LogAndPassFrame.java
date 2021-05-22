@@ -292,7 +292,7 @@ public class LogAndPassFrame {
         gracefulResumeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                uiController.gracefulResumeButton();
+                uiController.testSomething();
             }
         });
         storeWorkItemPosition.addActionListener(new ActionListener() {

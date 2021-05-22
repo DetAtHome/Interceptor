@@ -3,6 +3,8 @@
 #include <BrightBricks.h>
 #include <RemoteStepper.h>
 #include <RemoteSwitch.h>
+#include <RemoteGenericPWM.h>
+
   
 // --------- WIFI related -------------------
 WiFiClient outgoingClient;
@@ -11,9 +13,11 @@ WiFiClient outgoingClient;
 // ---------- BrightBricks related ----------
 bool hasConnectionFailure=false;
 BrickBus bus(10);
-RemoteStepper stepper(61);
+RemoteSwitch rswitch(10);
+RemoteGenericPWM rgeneric(15);
 
 // ------ Business logic --------------------
+const char CR = 13;
 bool sendToBrightBricks = false;
 String brightBricksCommand = "";
 
@@ -49,72 +53,111 @@ static void stepperReported(char* state) {
 // ---- business logic ----------
 bool skipNextCR = false;
 
+static void pwmStateReported(char* state) {
+  debug("Aaaa",0);
+}
+
 void setup()
 {
 
   // cnc shield comm
   Serial.begin(115200);
+  
+  Serial.println("\r\nGo");
+  
   // wifi setup
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
   }
-  
   outgoingClient.setNoDelay(true);
   outgoingClient.connect(host, 9023);
-  // BrightBricks setup
-  bus.initialize(13,errorCallback);
   while(!outgoingClient.connected()) {outgoingClient.connect(host, 9023);}
+  outgoingClient.println("#connected");
+  outgoingClient.flush();
+  delay(500);
+  // BrightBricks setup
+  bus.initialize(5,errorCallback);
+  debug("Bus initialized",0);
+  while(!rgeneric.setControlledPin(1)) {
+    delay(10);
+    bus.update();
+    debug(".",0);
+  }
+  debug("Spindle initialized",0);
 
 }
 
 void loop() {
 
-  // read data from cnc shield
-  if(Serial.available()>0) {
-     outgoingClient.write(Serial.read());
-  } 
-  if(outgoingClient.available()>0) {
-    char c = outgoingClient.read();
-    if (c=='#') {
-//       sendToBrightBricks=true;
-    }
-    if (c==13 && sendToBrightBricks) {
-      computeBrightBricksCommand(brightBricksCommand);
-      brightBricksCommand="";
-      sendToBrightBricks=false;
-    }
-    if(sendToBrightBricks) {
-      brightBricksCommand = brightBricksCommand + c;    
-    } else {
-      Serial.write(c);
-    }
-  }
-  if(!outgoingClient.connected()) {
-    // try to reconnect
-    outgoingClient.connect(host, 9023);
-  }
+    bus.update();
+    // read data from cnc shield
+    if(Serial.available()>0) {
+       outgoingClient.write(Serial.read());
+    } 
+    if(outgoingClient.available()>0) {
+      char c = outgoingClient.read();
+      if (c=='#') {
+         sendToBrightBricks=true;
+      }
   
-/*
-while (outgoingClient.available()) {
-  Serial.write(outgoingClient.read());
-}
-
-//check UART for data
-  if (Serial.available()) {
-    size_t len = Serial.available();
-    uint8_t sbuf[len];
-    Serial.readBytes(sbuf, len);
-    //push UART data to all connected telnet clients
-    if (outgoingClient && outgoingClient.connected()) {
-      outgoingClient.write(sbuf, len);
+      if(sendToBrightBricks) {
+        brightBricksCommand = brightBricksCommand + c;    
+      } else {
+        Serial.write(c);
+      }
+      if (c==13 && sendToBrightBricks) {
+        computeBrightBricksCommand(brightBricksCommand);
+        brightBricksCommand="";
+        sendToBrightBricks=false;
+      }
     }
-  }
-*/  
 }
 
 void computeBrightBricksCommand(String command) {
-  outgoingClient.println(command);
-  outgoingClient.flush();
+  char cmd = command.substring(1,2).charAt(0);
+  int param = command.substring(2).toInt();
+  switch(cmd) {
+  case 'O': 
+    switch (param) {
+      case 1:
+        rswitch.enable5V();
+        break;
+      case 2:
+        rswitch.enableVdd();
+        break;
+      case 3:
+        rswitch.disable5V();
+        break;
+      case 4:
+       rswitch.disableVdd();
+        break;
+    }
+    break;
+  case 'S': 
+    if (rgeneric.setPWM((int)param)) {
+      outgoingClient.print("#ok\r");
+      outgoingClient.flush();
+    } else {
+      outgoingClient.print("#buserror\r");
+      outgoingClient.flush();
+      
+    }
+    break;
+
+  }
+  
+  debug("done",command.substring(2).toInt());
+  
 }
+
+void debug(String text, int val) {
+
+  char promptBuffer[200];
+  text.toCharArray(promptBuffer, text.length()+1);
+  char buffer[2000];
+  sprintf(buffer, "#%s %d\r",promptBuffer, val);
+  outgoingClient.print(buffer);
+  outgoingClient.flush();
+ }

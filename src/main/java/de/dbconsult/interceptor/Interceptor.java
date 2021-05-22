@@ -39,10 +39,6 @@ public class Interceptor {
             e.printStackTrace();
         }
 
-        WifiCommunication communication = WifiCommunication.getInstance();
-        communication.setComPort(comPort);
-
-        System.out.println("Configured workflow chain: ");
 
         try {
             for (Workflow workflow : workflowRepository.getConfiguredWorkflows()) {
@@ -64,9 +60,14 @@ public class Interceptor {
         loggingThread.start();
 
         orchestrator = new Orchestrator(serialsRepository, workflowRepository, workflowDataStore, internalQueueMill);
+        WifiCommunication communication = WifiCommunication.getInstance();
+        communication.setComPort(comPort);
+        communication.setOrchestrator(orchestrator);
+        communication.setupSocket();
+        System.out.println("Configured workflow chain: ");
         counter = 0;
         // from now on all listener threads are active
-        communication.startCommunication(orchestrator);
+        //communication.startCommunication(orchestrator);
         while (true) {
             // Wait and parse forever, and ever and ever...
             try {

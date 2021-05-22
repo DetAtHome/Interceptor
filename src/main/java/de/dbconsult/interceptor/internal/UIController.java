@@ -2,6 +2,7 @@ package de.dbconsult.interceptor.internal;
 
 import de.dbconsult.interceptor.*;
 import de.dbconsult.interceptor.exactheight.GCodeSender;
+import de.dbconsult.interceptor.wifi.WifiCommunication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,8 +24,24 @@ public class UIController {
         workflowDataStore.update("doGracefulHold", true);
     }
 
-    public void gracefulResumeButton() {
-        workflowDataStore.update("doGracefulResume", true);
+    public void testSomething() {
+        // test Extra Mill Sendings or BrightBricks communications
+        WifiCommunication communication = WifiCommunication.getInstance();
+        WorkflowResult result = new WorkflowResult(1, TargetDevices.EXTRA, TargetDevices.EXTRA,null,0);
+        String extraCommand = "#O3\r";
+        result.setOutput(extraCommand.getBytes());
+        result.setLen(extraCommand.getBytes().length);
+        communication.writeToSocket(result);
+        while (!communication.hasExtraAnswer()) {
+            // block but give Threads some time>
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Here is your answer to the Extra request: " + communication.getLastExtraAnswer());
+        communication.markExtraAnswerConsumed();
     }
 
 
