@@ -47,6 +47,7 @@ public class Interceptor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        orchestrator = new Orchestrator(serialsRepository, workflowRepository, workflowDataStore, internalQueueMill);
         workflowDataStore.update("WorkflowRepository", workflowRepository);
         workflowDataStore.update("deviationActive", false);
         workflowDataStore.update("doGracefulHold", false);
@@ -54,12 +55,12 @@ public class Interceptor {
         workflowDataStore.update("lastResponse","nothin");
         workflowDataStore.update("pcQSize", 0L);
         workflowDataStore.update("millQSize", 0L);
+        workflowDataStore.update("ORCHESTRATOR", orchestrator);
         workflowDataStore.update("EXTRAREADER", new ExtraReader(workflowDataStore));
         ExternalLogger logger = new ExternalLogger(workflowDataStore);
         Thread loggingThread = new Thread(logger);
         loggingThread.start();
 
-        orchestrator = new Orchestrator(serialsRepository, workflowRepository, workflowDataStore, internalQueueMill);
         WifiCommunication communication = WifiCommunication.getInstance();
         communication.setComPort(comPort);
         communication.setOrchestrator(orchestrator);

@@ -383,15 +383,28 @@ public class LogAndPassFrame {
                         return;
                     }
                 }
+                if (((String) stringTableModel.getValueAt(stringTableModel.getRowCount() - 1, 3)).isEmpty()) {
+                    if (wfData.getFormSource()==TargetDevices.EXTRA) {
+                        stringTableModel.setValueAt(new String(wfData.getOutput()), stringTableModel.getRowCount() - 1, 3);
+                        String hexView = toHexString(wfData.getOutput());
+                        hexTableModel.setValueAt(hexView, stringTableModel.getRowCount() - 1, 3);
+                        return;
+                    }
+                }
+
             }
         }
         if (wfData.getFormSource()==TargetDevices.CANDLE) {
-            stringRow = new String[]{"" + wfData.getIndex(), new String(wfData.getOutput()), ""};
-            hexRow = new String[]{"" + wfData.getIndex(), toHexString(wfData.getOutput()), ""};
+            stringRow = new String[]{"" + wfData.getIndex(), new String(wfData.getOutput()), "", ""};
+            hexRow = new String[]{"" + wfData.getIndex(), toHexString(wfData.getOutput()), "", ""};
+
+        } else if (wfData.getFormSource()==TargetDevices.CNC){
+            stringRow = new String[]{"" + wfData.getIndex(), "", new String(wfData.getOutput()), ""};
+            hexRow = new String[]{"" + wfData.getIndex(), "", toHexString(wfData.getOutput()),""};
 
         } else {
-            stringRow = new String[]{"" + wfData.getIndex(), "", new String(wfData.getOutput())};
-            hexRow = new String[]{"" + wfData.getIndex(), "", toHexString(wfData.getOutput())};
+            stringRow = new String[]{"" + wfData.getIndex(), "", "", new String(wfData.getOutput())};
+            hexRow = new String[]{"" + wfData.getIndex(), "", "", toHexString(wfData.getOutput())};
         }
         stringTableModel.addRow(stringRow);
         if (stringTableModel.getRowCount() > 100) {

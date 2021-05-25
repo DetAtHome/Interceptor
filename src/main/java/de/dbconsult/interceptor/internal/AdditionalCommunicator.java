@@ -1,6 +1,7 @@
 package de.dbconsult.interceptor.internal;
 
 import de.dbconsult.interceptor.*;
+import de.dbconsult.interceptor.wifi.WifiCommunication;
 
 public class AdditionalCommunicator {
 
@@ -12,12 +13,11 @@ public class AdditionalCommunicator {
 
 
     public String blockUntilIdle() {
-//WIFIFIX        Communication mill = getCommDescrption("mill").getComm();
+        WifiCommunication communication = WifiCommunication.getInstance();
         String answer = "";
 
         while(!answer.toLowerCase().contains("idle")) {
-//WIFIFIX            mill.write("?");
-//WIFIFIX            answer=new String(mill.readFully("tomill").getOutput());
+            communication.directWriteToCNC("?");
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
@@ -28,11 +28,11 @@ public class AdditionalCommunicator {
     }
 
     public String blockUntilOk() {
-//WIFIFIX        Communication mill = getCommDescrption("mill").getComm();
+        WifiCommunication communication = WifiCommunication.getInstance();
         String answer = "";
 
         while(!answer.toLowerCase().contains("ok")) {
-//WIFIFIX            answer=new String(mill.readFully("tomill").getOutput());
+            answer = new String(communication.readFully("tocandle").getOutput());
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
@@ -42,28 +42,32 @@ public class AdditionalCommunicator {
         return answer;
     }
 
-    public void directWrite(String to, String data) {
-// WIFIFIX        toComm.write(data);
+    public void directWrite(String channel, String data) {
+        WifiCommunication communication = WifiCommunication.getInstance();
+        communication.directWriteToCNC(data);
+
     }
 
     public void switchProbingOff() {
-        switchProbing("#p0;\r");
+        switchProbing("#p0\r");
     }
 
     public void switchProbingOn() {
-        switchProbing("#p1;\r");
+        switchProbing("#p1\r");
     }
 
     public void setSpindleSpeed(double speed) {
         int intSpeed = ((Double)speed).intValue();
-        String strData = "#s" + intSpeed + ";\r";
+        String strData = "#s" + intSpeed + "\r";
         WorkflowResult data = new WorkflowResult(0, null,TargetDevices.EXTRA,strData.getBytes(), strData.length() );
- // WIFIFIX       extra.getComm().write(data);
+        WifiCommunication communication = WifiCommunication.getInstance();
+        communication.writeToSocket(data);
     }
 
     private void switchProbing(String onOff) {
         WorkflowResult data = new WorkflowResult(0, null,TargetDevices.EXTRA,onOff.getBytes(), onOff.length() );
- // WIFIFIX       extra.getComm().write(data);
+        WifiCommunication communication = WifiCommunication.getInstance();
+        communication.writeToSocket(data);
     }
 
 

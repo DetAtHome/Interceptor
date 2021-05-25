@@ -11,12 +11,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class WifiCommunication {
     private ServerSocket listener = null;
+    private ServerSocket extraListener = null;
+
     private Socket socket = null;
+    private Socket extraSocket = null;
     private BufferedReader inFromSocket = null;
+    private BufferedReader inFromExtraSocket = null;
     private BufferedWriter outToSocket = null;
+    private BufferedWriter outToExtraSocket = null;
     private static WifiCommunication instance = null;
     String toMillBuffer = "";
     String toCandleBuffer = "";
@@ -28,11 +35,17 @@ public class WifiCommunication {
     static SerialPort comPort;
 
     boolean stopThreads = true;
+    boolean isWaitingToAccept = true;
+    long lastHeartbeatSent = System.currentTimeMillis();
+    long lastHeartbeatReceived = System.currentTimeMillis();
+
     Thread readAndSignalAnyExtra = null;
     Thread dispatchAnythingFromCNC = null;
     Thread dispatchRequestFromCandle = null;
     Thread listenToSocket = null;
+    Thread listenToExtraSocket = null;
     Thread listenToComm = null;
+    Thread heartbeat = null;
 
     public static void main(String[] args) throws Exception {
         String portName = "com6";
@@ -80,19 +93,46 @@ public class WifiCommunication {
     private WifiCommunication() {
         try {
             listener = new ServerSocket(9023);
+            extraListener = new ServerSocket(9024);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void startCommunication(Orchestrator orchestrator) {
+
+        heartbeat = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(!stopThreads) {
+                    sendHeartBeat();
+                    checkLastHeartbeatReceived();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+     //   heartbeat.start();
+
         listenToSocket = new Thread(new Runnable() {
             @Override
             public void run() {
-                readFromMillOrExtra();
+                readFromMill();
             }
         } );
+
         listenToSocket.start();
+        /* comment this in if running from main, not needed in interceptor environment */
+        listenToExtraSocket = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                readFromExtra();
+            }
+        } );
+        listenToExtraSocket.start();
         /* comment this in if running from main, not needed in interceptor environment */
 
         listenToComm = new Thread(new Runnable() {
@@ -121,7 +161,7 @@ public class WifiCommunication {
         readAndSignalAnyExtra = new Thread(new Runnable() {
             @Override
             public void run() {
-                readAndDispatchIncomingExtra(null);
+                readAndDispatchIncomingExtra(orchestrator);
             }
         });
         readAndSignalAnyExtra.start();
@@ -130,7 +170,7 @@ public class WifiCommunication {
 
     public void readAndDispatchIncomingExtra(Orchestrator orchestrator) {
         while(!stopThreads) {
-            System.out.println("Reading fully from ExtraAnswer");
+   //         System.out.println("Reading fully from ExtraAnswer");
             WorkflowResult toExtra = readFully("toextra");
             if (orchestrator==null) {
                 // direct pingpong
@@ -138,6 +178,10 @@ public class WifiCommunication {
                 toExtra.setToDestination(TargetDevices.EXTRA);
                 answerFromExtraRead = true;
                 lastExtraAnswer = lastExtraAnswer + new String(toExtra.getOutput());
+            } else {
+                toExtra.setFormSource(TargetDevices.EXTRA);
+                toExtra.setToDestination(TargetDevices.SKIP);
+                WorkflowResult afterWorkflows = orchestrator.enqueueToWorkflow(toExtra);
             }
         }
     }
@@ -159,7 +203,7 @@ public class WifiCommunication {
             WorkflowResult toCandle = readFully("tocandle");
             toCandle.setFormSource(TargetDevices.CNC);
             toCandle.setToDestination(TargetDevices.CANDLE);
-            System.out.println("Got something for candle: " + new String(toCandle.getOutput()));
+//            System.out.println("Got something for candle: " + new String(toCandle.getOutput()));
             WorkflowResult afterWorkflows = orchestrator.enqueueToWorkflow(toCandle);
             if(afterWorkflows.getToDestination()!=TargetDevices.ABORT) {
                 writeToSerial(afterWorkflows);
@@ -181,12 +225,12 @@ public class WifiCommunication {
     }
     public void readAndDispatchIncomingCandle(Orchestrator orchestrator) {
         while(!stopThreads) {
-//            System.out.println("Read fully from Candle to Mill");
+ //          System.out.println("Read fully from Candle to Mill");
             WorkflowResult toMill = readFully("tomill");
             toMill.setFormSource(TargetDevices.CANDLE);
             toMill.setToDestination(TargetDevices.CNC);
             WorkflowResult afterWorkflows = orchestrator.enqueueToWorkflow(toMill);
-//            System.out.println("Got something to send to mill");
+ //           System.out.println("Got something to send to mill");
             if (afterWorkflows.getToDestination()!=TargetDevices.ABORT) {
                 writeToSocket(afterWorkflows);
             }
@@ -200,16 +244,21 @@ public class WifiCommunication {
             outData[i] = (char) toCNCOrExtra.getOutput()[i];
         }
         try {
+            if (toCNCOrExtra.getToDestination() == TargetDevices.CNC) {
+                outToSocket.write(outData);
+                outToSocket.flush();
+            } else if(toCNCOrExtra.getToDestination() == TargetDevices.EXTRA) {
+                outToExtraSocket.write(outData);
+                outToExtraSocket.flush();
 
-            outToSocket.write(outData);
-            outToSocket.flush();
-  /*          if(outData[0]==24) {
+            }
+ /*           if(outData[0]==24) {
                 System.out.println("Sent CtrlX to mill");
             } else {
                 System.out.println("Sent to mill:" + new String(outData));
                 System.out.println("length was btw: " + outData.length);
-            } */
-            //            Thread.sleep(10);
+            }
+            //            Thread.sleep(10);*/
         } catch(IOException ioe) {
             // connection reset by peer?
             System.out.println("Connection reset?");
@@ -219,7 +268,9 @@ public class WifiCommunication {
         }
 
     }
-    public void write(String grbl) {
+
+    // convenience method for sending stuff without a WorkflowResult object only to CNC
+    public void directWriteToCNC(String grbl) {
         try {
 
         //    out.write(grbl + "\r\n");
@@ -240,7 +291,7 @@ public class WifiCommunication {
         int index = -1;
         // find 1st complete command or answer
         while((index=indexOfCRorPushCommand(payload))<0) {
-   //         System.out.println("Payload: " + payload + " length: " + payload.length() + " channel " + channel);
+       //     System.out.println("Payload: " + payload + " length: " + payload.length() + " channel " + channel);
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
@@ -267,7 +318,7 @@ public class WifiCommunication {
         }
 
 
-//            System.out.println("payload is " + payload + " length: " + payload.length());
+   //         System.out.println("payload is " + payload + " length: " + payload.length());
 
             data.setOutput(payload.getBytes());
             data.setLen(payload.length());
@@ -309,16 +360,25 @@ public class WifiCommunication {
 
     }
 
-    public void setupSocket() {
+    public synchronized void setupSocket() {
         try {
             stopThreads = true;
             Thread.sleep(10); // give threads time to terminate
             System.out.println("Waiting for incoming socket");
+            isWaitingToAccept = true;
             socket = listener.accept();
-            System.out.println("Accepted socket");
+            System.out.println("Accepted socket ");
+
+            System.out.println("Waiting for incoming extra socket");
+            extraSocket = extraListener.accept();
+            isWaitingToAccept = false;
+            System.out.println("Accepted socket ");
             socket.setKeepAlive(true);
+            extraSocket.setKeepAlive(true);
             inFromSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             outToSocket = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            inFromExtraSocket = new BufferedReader(new InputStreamReader(extraSocket.getInputStream()));
+            outToExtraSocket = new BufferedWriter(new OutputStreamWriter(extraSocket.getOutputStream()));
             stopThreads = false;
             startCommunication(orchestrator);
         } catch(Exception e) {
@@ -326,31 +386,56 @@ public class WifiCommunication {
         }
     }
 
+    public void readFromExtra() {
+        char[] dataFromExtra = new char[1];
+        try {
+            while (!stopThreads) {
+                if(inFromExtraSocket.read(dataFromExtra,0,1)>0) {
+                    toExtraBuffer = toExtraBuffer + dataFromExtra[0];
+                    // Convention for now and always> Extra starts with # and ends with CR (no LF involved)
+//                    if (dataFromExtra[0]==13){
+//                        Date dte = new Date(System.currentTimeMillis());
+//                        SimpleDateFormat fmt = new SimpleDateFormat("hh:mm:ss");
+//                        System.out.println(fmt.format(dte) + "Answer from Extra:" + toExtraBuffer);
+//                    }
+//                } else {
+//                    // socket lost
+//                    System.out.println("cannot read from extra socket, renew");
+//                    setupSocket();
+                }
 
-    public void readFromMillOrExtra() {
+            }
+        } catch (SocketException e) {
+            System.out.println("No extra socket, renewing");
+            setupSocket();
+        } catch (SocketTimeoutException te) {
+            System.out.println("Extra Socket timeout, renewing");
+            setupSocket();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    public void readFromMill() {
         char[] dataFromMill = new char[1];
         try {
-            boolean extraDetected=false;
-
             while (!stopThreads) {
                if(inFromSocket.read(dataFromMill,0,1)>0) {
-                    if(dataFromMill[0]=='#') {
-                        extraDetected=true;
-                    }
-                    if(extraDetected) {
-                        toExtraBuffer = toExtraBuffer + dataFromMill[0];
-                    } else {
+  //                  if(dataFromMill[0]==94) {
+  //                      lastHeartbeatReceived = System.currentTimeMillis();
+  //                  } else {
                         toCandleBuffer = toCandleBuffer + dataFromMill[0];
-                    }
-                    // Convention for now and always> Extra starts with # and ends with CR (no LF involved)
-                    if(extraDetected && dataFromMill[0]==13) {
-                        extraDetected=false;
-                        System.out.println("Answer from Extra:" + toExtraBuffer);
-                    }
-                } else {
-                   // socket lost
-                   System.out.println("cannot read from socket, renew");
-                   setupSocket();
+
+//                    if(dataFromMill[0]==13) {
+//                        Date dte = new Date(System.currentTimeMillis());
+//                        SimpleDateFormat fmt = new SimpleDateFormat("hh:mm:ss");
+//                        System.out.println(fmt.format(dte) + "Answer from CNC:" + toCandleBuffer);
+//                    }
+   //                 }
+//                } else {
+//                   // socket lost
+//                   System.out.println("cannot read from socket, renew");
+//                   setupSocket();
                }
 
             }
@@ -371,6 +456,11 @@ public class WifiCommunication {
                 byte[] outAsByte = new byte[1];
                 if(comPort.readBytes(outAsByte,1)>0) {
                     toMillBuffer = toMillBuffer + (char)outAsByte[0];
+                    if(outAsByte[0]==13) {
+                        Date dte = new Date(System.currentTimeMillis());
+                        SimpleDateFormat fmt = new SimpleDateFormat("hh:mm:ss");
+  //                      System.out.println(fmt.format(dte) + "Read from ComPort:" + toMillBuffer);
+                    }
                 }
 
             }
@@ -379,5 +469,26 @@ public class WifiCommunication {
         }
     }
 
+    private void sendHeartBeat() {
+        try {
+            if (isWaitingToAccept) return;
+            if(System.currentTimeMillis()-lastHeartbeatSent>1000) {
+                outToSocket.write(94);
+                outToSocket.flush();
+                lastHeartbeatSent = System.currentTimeMillis();
+            }
+        } catch (Exception e) {
+            setupSocket();
+        }
+
+    }
+
+    private void checkLastHeartbeatReceived() {
+        if(System.currentTimeMillis()-lastHeartbeatReceived>2000 &&!isWaitingToAccept) {
+            System.out.println("heartbeat failed, System time: " + System.currentTimeMillis() + " last: " + lastHeartbeatReceived + " difference: " + (System.currentTimeMillis()-lastHeartbeatReceived));
+     //      setupSocket();
+            lastHeartbeatReceived = System.currentTimeMillis();
+        }
+    }
 }
 

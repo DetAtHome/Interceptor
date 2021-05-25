@@ -1,9 +1,8 @@
 package de.dbconsult.interceptor.exactposition;
 
-import de.dbconsult.interceptor.Communication;
-import de.dbconsult.interceptor.SerialsRepository;
-import de.dbconsult.interceptor.WorkflowDataStore;
-import de.dbconsult.interceptor.WorkflowResult;
+import de.dbconsult.interceptor.*;
+import de.dbconsult.interceptor.wifi.WifiCommunication;
+
 import static de.dbconsult.interceptor.internal.Reversed.reversed;
 import java.util.ArrayList;
 
@@ -13,12 +12,15 @@ public class ExtraReader {
     private boolean readingPaused = false;
 
     WorkflowDataStore workflowDataStore;
+    Orchestrator orchestrator = null;
     private ArrayList<String> lastLine = new ArrayList<>();
 
     long logLine=0;
 
     public ExtraReader(WorkflowDataStore workflowDataStore) {
         this.workflowDataStore = workflowDataStore;
+        orchestrator= (Orchestrator) workflowDataStore.read("ORCHESTRATOR");
+
     }
 
     public void initializeHeight() {
@@ -65,7 +67,12 @@ public class ExtraReader {
     }
 
     public void send(String toSend) {
-//WIFIFIX        if(null!=toSend) extra.write(toSend);
+        toSend = "#" +  toSend +"\r";
+        byte [] data = toSend.getBytes();
+        WorkflowResult workflowResult = new WorkflowResult(0, TargetDevices.EXTRA, TargetDevices.EXTRA,data,data.length);
+        WorkflowResult end = orchestrator.enqueueToWorkflow(workflowResult);
+        WifiCommunication.getInstance().writeToSocket(end);
+
     }
 
     public String getLastLog(boolean excludeHeartbeat) {

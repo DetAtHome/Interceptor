@@ -56,14 +56,14 @@ public class ToolchangeMonitor extends AbstractWorkflow {
                 return data;
             }
 //            data.setToDestination(new SerialDescriptor(0,"ABORT","abort"));
-            additionalCommunicator.directWrite("mill", "G0 Z0 F500\n");
+            additionalCommunicator.directWrite("tocnc", "G0 Z0 F500\n");
             additionalCommunicator.blockUntilOk();
-            additionalCommunicator.directWrite("mill", "G0 X0 F500\n");
+            additionalCommunicator.directWrite("tocnc", "G0 X0 F500\n");
             additionalCommunicator.blockUntilOk();
             additionalCommunicator.blockUntilIdle();
-            additionalCommunicator.directWrite("mill", "M0\n");
+            additionalCommunicator.directWrite("tocnc", "M0\n");
             changeResult = blockUntilUnLoaded(toolData);
-            additionalCommunicator.directWrite("mill", "~");
+            additionalCommunicator.directWrite("tocnc", "~");
             additionalCommunicator.blockUntilOk();
         }
         return data;

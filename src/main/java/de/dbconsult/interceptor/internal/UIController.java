@@ -125,7 +125,8 @@ public class UIController {
             mill.write(data);
             String answer = additionalCommunicator.blockUntilIdle();
             additionalCommunicator.switchProbingOff();
-            additionalCommunicator.directWrite("pc", answer);
+            // I do not think this is needed any more
+            //            additionalCommunicator.directWrite("tocandle", answer);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
