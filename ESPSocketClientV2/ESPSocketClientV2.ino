@@ -7,6 +7,7 @@
 // --------- WIFI related -------------------
 WiFiClient outgoingClient;
 WiFiClient extraClient;
+WiFiClient heartbeatClient;
 
 // ------ Business logic --------------------
 SoftwareSerial controller(D7,D8);
@@ -36,9 +37,6 @@ void loop() {
     // read data from cnc shield
     if(Serial.available()>0) {
       outgoingClient.write(Serial.read());
-//       if (outgoingClient.write(Serial.read()>0)) {
-//         lastHeartbeatSent=millis();
-//       }
     } 
     if(controller.available()) {
       extraClient.write(controller.read());
@@ -46,18 +44,23 @@ void loop() {
     
     if(outgoingClient.available()>0) {
       char c = outgoingClient.read();
- /*     if(c==94) {
-        lastHeartbeatReceived=millis();
-      } else { */
-        Serial.write(c);
-//      }
+      Serial.write(c);
     }
     
     if(extraClient.available()>0) {
       char c = extraClient.read();
       controller.write(c);
     }
-/*
+
+    if(heartbeatClient.available()>0) {
+      if(heartbeatClient.read()<0) {
+        // stale connection
+        setupConnections();
+      } else {
+        lastHeartbeatReceived = millis();
+      }
+    }
+
     // No incoming heartbeat for a second
     if((millis()-lastHeartbeatReceived)>1200) {
       setupConnections();
@@ -66,12 +69,14 @@ void loop() {
 
     // try to write a heartbeat and renew if needed
     if((millis()-lastHeartbeatSent)>1000) {
-      if (outgoingClient.write(94)<0) {
+      int wrte = heartbeatClient.write(94);
+      if (wrte < 0) {
         setupConnections();
+      } else {
+        lastHeartbeatSent=millis();
       }
-      lastHeartbeatSent=millis();
     }
-    */
+    
 }
 
 
@@ -86,6 +91,10 @@ void debug(String text, int val) {
  }
 
  void setupConnections() {
+  heartbeatClient.setNoDelay(true);
+  heartbeatClient.connect(host, 9022);
+  while(!heartbeatClient.connected()) {heartbeatClient.connect(host, 9022);}
+  
   outgoingClient.setNoDelay(true);
   outgoingClient.connect(host, 9023);
   while(!outgoingClient.connected()) {outgoingClient.connect(host, 9023);}
@@ -93,7 +102,7 @@ void debug(String text, int val) {
   extraClient.setNoDelay(true);
   extraClient.connect(host, 9024);
   while(!extraClient.connected()) {extraClient.connect(host, 9024);}
-  extraClient.println("#connected both");
+  extraClient.println("#connected all");
   extraClient.flush();
 
  }

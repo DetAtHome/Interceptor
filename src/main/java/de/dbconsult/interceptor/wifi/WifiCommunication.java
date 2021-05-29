@@ -15,14 +15,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class WifiCommunication {
+
+    private ServerSocket heartBeatListener = null;
     private ServerSocket listener = null;
     private ServerSocket extraListener = null;
 
     private Socket socket = null;
     private Socket extraSocket = null;
+    private Socket heartbeatSocket = null;
+    private BufferedReader inFromHeartbeatSocket = null;
+    private BufferedWriter outToHeartbeatSocket = null;
     private BufferedReader inFromSocket = null;
-    private BufferedReader inFromExtraSocket = null;
     private BufferedWriter outToSocket = null;
+    private BufferedReader inFromExtraSocket = null;
     private BufferedWriter outToExtraSocket = null;
     private static WifiCommunication instance = null;
     String toMillBuffer = "";
@@ -92,8 +97,10 @@ public class WifiCommunication {
 
     private WifiCommunication() {
         try {
+            heartBeatListener = new ServerSocket(9022);
             listener = new ServerSocket(9023);
             extraListener = new ServerSocket(9024);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,6 +114,7 @@ public class WifiCommunication {
                 while(!stopThreads) {
                     sendHeartBeat();
                     checkLastHeartbeatReceived();
+                    Thread.yield();
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
@@ -115,7 +123,7 @@ public class WifiCommunication {
                 }
             }
         });
-     //   heartbeat.start();
+        heartbeat.start();
 
         listenToSocket = new Thread(new Runnable() {
             @Override
@@ -154,6 +162,7 @@ public class WifiCommunication {
             @Override
             public void run() {
                 readAndDispatchIncomingCNC(orchestrator);
+                Thread.yield();
             }
         });
         dispatchAnythingFromCNC.start();
@@ -162,6 +171,7 @@ public class WifiCommunication {
             @Override
             public void run() {
                 readAndDispatchIncomingExtra(orchestrator);
+                Thread.yield();
             }
         });
         readAndSignalAnyExtra.start();
@@ -183,6 +193,7 @@ public class WifiCommunication {
                 toExtra.setToDestination(TargetDevices.SKIP);
                 WorkflowResult afterWorkflows = orchestrator.enqueueToWorkflow(toExtra);
             }
+            Thread.yield();
         }
     }
 
@@ -208,6 +219,7 @@ public class WifiCommunication {
             if(afterWorkflows.getToDestination()!=TargetDevices.ABORT) {
                 writeToSerial(afterWorkflows);
             }
+            Thread.yield();
         }
     }
 
@@ -234,6 +246,7 @@ public class WifiCommunication {
             if (afterWorkflows.getToDestination()!=TargetDevices.ABORT) {
                 writeToSocket(afterWorkflows);
             }
+            Thread.yield();
         }
 
     }
@@ -307,8 +320,12 @@ public class WifiCommunication {
         }
 
         if ("toextra".equalsIgnoreCase(channel)) {
-            payload = toExtraBuffer.substring(0,index+1);
-            toExtraBuffer = toExtraBuffer.substring(index+1);
+            try {
+                payload = toExtraBuffer.substring(0, index + 1);
+                toExtraBuffer = toExtraBuffer.substring(index + 1);
+            } catch (StringIndexOutOfBoundsException s) {
+                System.out.println("String index out of range, but why");
+            }
         } else if ("tocandle".equalsIgnoreCase(channel)) {
             payload = toCandleBuffer.substring(0,index+1);
             toCandleBuffer = toCandleBuffer.substring(index+1);
@@ -364,8 +381,12 @@ public class WifiCommunication {
         try {
             stopThreads = true;
             Thread.sleep(10); // give threads time to terminate
-            System.out.println("Waiting for incoming socket");
             isWaitingToAccept = true;
+            System.out.println("Waiting for incoming heartbeat socket");
+            heartbeatSocket = heartBeatListener.accept();
+            System.out.println("Accepted socket ");
+
+            System.out.println("Waiting for incoming socket");
             socket = listener.accept();
             System.out.println("Accepted socket ");
 
@@ -373,12 +394,15 @@ public class WifiCommunication {
             extraSocket = extraListener.accept();
             isWaitingToAccept = false;
             System.out.println("Accepted socket ");
+            heartbeatSocket.setKeepAlive(true);
             socket.setKeepAlive(true);
             extraSocket.setKeepAlive(true);
             inFromSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             outToSocket = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             inFromExtraSocket = new BufferedReader(new InputStreamReader(extraSocket.getInputStream()));
             outToExtraSocket = new BufferedWriter(new OutputStreamWriter(extraSocket.getOutputStream()));
+            inFromHeartbeatSocket = new BufferedReader(new InputStreamReader(heartbeatSocket.getInputStream()));
+            outToHeartbeatSocket = new BufferedWriter(new OutputStreamWriter(heartbeatSocket.getOutputStream()));
             stopThreads = false;
             startCommunication(orchestrator);
         } catch(Exception e) {
@@ -404,6 +428,7 @@ public class WifiCommunication {
 //                    setupSocket();
                 }
 
+                Thread.yield();
             }
         } catch (SocketException e) {
             System.out.println("No extra socket, renewing");
@@ -437,6 +462,7 @@ public class WifiCommunication {
 //                   System.out.println("cannot read from socket, renew");
 //                   setupSocket();
                }
+                Thread.yield();
 
             }
         } catch (SocketException e) {
@@ -462,6 +488,7 @@ public class WifiCommunication {
   //                      System.out.println(fmt.format(dte) + "Read from ComPort:" + toMillBuffer);
                     }
                 }
+                Thread.yield();
 
             }
         } catch (Exception e) {
@@ -473,20 +500,39 @@ public class WifiCommunication {
         try {
             if (isWaitingToAccept) return;
             if(System.currentTimeMillis()-lastHeartbeatSent>1000) {
-                outToSocket.write(94);
-                outToSocket.flush();
+                outToHeartbeatSocket.write(94);
+                outToHeartbeatSocket.flush();
                 lastHeartbeatSent = System.currentTimeMillis();
             }
         } catch (Exception e) {
+            System.out.println("Could not write, calling setup");
             setupSocket();
         }
 
     }
 
     private void checkLastHeartbeatReceived() {
-        if(System.currentTimeMillis()-lastHeartbeatReceived>2000 &&!isWaitingToAccept) {
-            System.out.println("heartbeat failed, System time: " + System.currentTimeMillis() + " last: " + lastHeartbeatReceived + " difference: " + (System.currentTimeMillis()-lastHeartbeatReceived));
-     //      setupSocket();
+        char[] dataFromHeartbeat = new char[1];
+        if(isWaitingToAccept) return;
+        if(System.currentTimeMillis() - lastHeartbeatReceived<1000) return;
+        try {
+
+            if (inFromHeartbeatSocket.read(dataFromHeartbeat,0,1) < 1) {
+                // socket closed
+                System.out.println("Could not read from heartbeat, renewing sockets");
+                setupSocket();
+            } else {
+                if(dataFromHeartbeat[0]==94) {
+                    lastHeartbeatReceived = System.currentTimeMillis();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("heartbeat failed (exception), System time: " + System.currentTimeMillis() + " last: " + lastHeartbeatReceived + " difference: " + (System.currentTimeMillis()-lastHeartbeatReceived));
+            setupSocket();
+        }
+        if(System.currentTimeMillis()-lastHeartbeatReceived>1300 &&!isWaitingToAccept) {
+            System.out.println("heartbeat failed (timeout), System time: " + System.currentTimeMillis() + " last: " + lastHeartbeatReceived + " difference: " + (System.currentTimeMillis()-lastHeartbeatReceived));
+            setupSocket();
             lastHeartbeatReceived = System.currentTimeMillis();
         }
     }

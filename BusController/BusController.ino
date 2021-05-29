@@ -2,7 +2,12 @@
 #include <BrightBricks.h>
 #include <RemoteGenericPWM.h>
 
-SoftwareSerial controller(7,8);
+#define BRICKBUS_PIN 12
+#define SPINDLE_PIN 11
+#define SERIAL_RX 10
+#define SERIAL_TX 9
+
+SoftwareSerial controller(SERIAL_RX, SERIAL_TX);
 BrickBus bus(10);
 RemoteGenericPWM rgeneric(15);
 
@@ -29,9 +34,9 @@ static void errorCallback(byte device, int code) {
 }
 void setup() {
   Serial.begin(115200);
-  pinMode(9,OUTPUT);
+  pinMode(SPINDLE_PIN,OUTPUT);
   controller.begin(9600);
-  bus.initialize(11,errorCallback);
+  bus.initialize(BRICKBUS_PIN, errorCallback);
   rgeneric.initialize(&bus);
   
 }
@@ -95,7 +100,7 @@ void loop() {
       break;
     case 's':
       int i = map(param,0,20000,0,255);
-      analogWrite(9,i);
+      analogWrite(SPINDLE_PIN, i);
       if(rgeneric.setPWM(i)) {
         Serial.println("#ok");
         controller.print("#ok\r");
