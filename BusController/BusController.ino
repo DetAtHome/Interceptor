@@ -18,6 +18,7 @@ boolean fullyRead=false;
 int i;
 char read;
 long lastPing = millis();
+boolean doPing = true;
 
 static void errorCallback(byte device, int code) {
   if (code==404) {
@@ -98,10 +99,8 @@ void loop() {
         controller.flush();
       }
       break;
-    case 's':
-      int i = map(param,0,20000,0,255);
-      analogWrite(SPINDLE_PIN, i);
-      if(rgeneric.setPWM(i)) {
+    case 'g':
+      if(rgeneric.setPWM(param)) {
         Serial.println("#ok");
         controller.print("#ok\r");
         controller.flush();
@@ -111,16 +110,21 @@ void loop() {
         controller.flush();
       }
       break;
+    case 's':
+    case 'S':
+      int i = map(param,0,20000,0,255);
+      analogWrite(SPINDLE_PIN, i);
+      break;
         
     }
     for(int j=0;j<32;j++) { string[j]= 0; }
 
 
   }
-//  if(millis()-lastPing>1000) {
-//      Serial.println("Ping");
-//      controller.print("#ping\r");
-//      controller.flush();
-//      lastPing=millis();
-//    }
+  if(doPing) {
+      Serial.println("Ping");
+      controller.print("#ping\r");
+      controller.flush();
+      doPing = false;
+    }
 }
