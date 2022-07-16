@@ -21,7 +21,7 @@ public class Interceptor {
 
     private static SerialsRepository serialsRepository = new SerialsRepository();
     private static WorkflowDataStore workflowDataStore = WorkflowDataStore.getInstance();
-    private static WorkflowRepository workflowRepository = new WorkflowRepository(workflowDataStore);
+    private static WorkflowRepository workflowRepository = null;
     private static InternalQueue internalQueueMill = new InternalQueue();
     private static InternalQueue internalQueuePC = new InternalQueue();
 
@@ -39,15 +39,8 @@ public class Interceptor {
             e.printStackTrace();
         }
 
+        workflowRepository = new WorkflowRepository(workflowDataStore);
 
-        try {
-            for (Workflow workflow : workflowRepository.getConfiguredWorkflows()) {
-                System.out.println(workflow.getClass().getName());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        orchestrator = new Orchestrator(serialsRepository, workflowRepository, workflowDataStore, internalQueueMill);
         workflowDataStore.update("WorkflowRepository", workflowRepository);
         workflowDataStore.update("deviationActive", false);
         workflowDataStore.update("doGracefulHold", false);
@@ -55,9 +48,20 @@ public class Interceptor {
         workflowDataStore.update("lastResponse","nothin");
         workflowDataStore.update("pcQSize", 0L);
         workflowDataStore.update("millQSize", 0L);
+
+        orchestrator = new Orchestrator(serialsRepository, workflowRepository, workflowDataStore, internalQueueMill);
         workflowDataStore.update("ORCHESTRATOR", orchestrator);
         workflowDataStore.update("EXTRAREADER", new ExtraReader(workflowDataStore));
-        ExternalLogger logger = new ExternalLogger(workflowDataStore);
+
+        workflowRepository.intialize(workflowDataStore);
+        // this is only eye candy
+        try {
+            for (Workflow workflow : workflowRepository.getConfiguredWorkflows()) {
+                System.out.println(workflow.getClass().getName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }        ExternalLogger logger = new ExternalLogger(workflowDataStore);
         Thread loggingThread = new Thread(logger);
         loggingThread.start();
 

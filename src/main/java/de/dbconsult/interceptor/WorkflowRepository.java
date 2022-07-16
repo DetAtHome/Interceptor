@@ -12,6 +12,9 @@ public class WorkflowRepository {
     private WorkflowDataStore workflowDataStore;
     public WorkflowRepository(WorkflowDataStore workflowDataStore) {
         this.workflowDataStore = workflowDataStore;
+    }
+
+    public void intialize(WorkflowDataStore workflowDataStore) {
         ArrayList<String> flows = new ArrayList(); //Collections.emptyList();
         try {
             flows = (ArrayList<String>) Files.readAllLines(Paths.get("Workflow.txt"));
@@ -41,8 +44,6 @@ public class WorkflowRepository {
                 }
             }
         }
-
-
     }
 
     public ArrayList<Workflow> getConfiguredWorkflows() {

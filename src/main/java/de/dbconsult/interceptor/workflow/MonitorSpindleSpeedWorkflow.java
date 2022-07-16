@@ -4,6 +4,7 @@ import de.dbconsult.interceptor.TargetDevices;
 import de.dbconsult.interceptor.Workflow;
 import de.dbconsult.interceptor.WorkflowDataStore;
 import de.dbconsult.interceptor.WorkflowResult;
+import de.dbconsult.interceptor.exactposition.ExtraReader;
 import de.dbconsult.interceptor.internal.AdditionalCommunicator;
 
 import java.util.StringTokenizer;
@@ -12,14 +13,15 @@ import java.util.StringTokenizer;
 public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Workflow {
 
     WorkflowDataStore workflowDataStore = null;
-    AdditionalCommunicator additionalCommunicator = null;
+    ExtraReader additionalCommunicator = null;
     double desiredSpindleSpeed=0;
 
     @Override
     public void initialize(WorkflowDataStore workflowDataStore) {
 
         this.workflowDataStore = workflowDataStore;
-        additionalCommunicator = new AdditionalCommunicator(workflowDataStore);
+        System.out.println("extrareader: " + workflowDataStore.read("EXTRAREADER"));
+        additionalCommunicator = (ExtraReader) workflowDataStore.read("EXTRAREADER");
     }
 
     public synchronized WorkflowResult process(WorkflowResult data) {
@@ -32,7 +34,7 @@ public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Wor
         if (message.contains("[PRB")) return data;
         if (message.contains("Grbl")) return data;
         if (message.toLowerCase().contains("alarm")) {
-            additionalCommunicator.setSpindleSpeed(0);
+            additionalCommunicator.send("S0;");
             return data;
         }
         determineSpindleSpeed(message);
@@ -42,46 +44,42 @@ public class MonitorSpindleSpeedWorkflow extends AbstractWorkflow implements Wor
 
     private void determineSpindleSpeed(String message) {
 
+/* valid strings from mill:
+1.) <Idle|MPos:-187.000,-3.000,-8.000|FS:0,20000|Ov:100,100,100|A:S>
+2.) <Idle|MPos:-187.000,-3.000,-8.000|FS:0,0>
+3.) [GC:G0 G54 G17 G21 G90 G94 M5 M9 T0 F0 S20000]
+1 Valid, running at 20000
+2 Valid, stopped
+3 invalid, showing max speed but in state M5
 
-        if ((message.contains("[") && message.contains("]")) ||
-                (message.contains("<") && message.contains(">"))){
+ */
 
-            int sIndex = message.indexOf("S");
-            if (sIndex<0) return;
-            message = message.concat(" ");
-            String param = message.substring(sIndex + 1).trim();
-            StringTokenizer tokenizer = new StringTokenizer(param, "]\n\r ");
-            String val = tokenizer.nextToken();
-
-            if(message.indexOf(":", sIndex)==sIndex+1) {
-                int cIndex=message.indexOf(",",sIndex);
-                param = message.substring(cIndex + 1).trim();
-                tokenizer = new StringTokenizer(param, "|]\n\r> ");
-                val = tokenizer.nextToken();
-            }
-
-            try {
-                desiredSpindleSpeed = Double.parseDouble(val);
-                if (WorkflowDataStore.getInstance().read("SpindleSpeed")==null || (Double)WorkflowDataStore.getInstance().read("SpindleSpeed")!=desiredSpindleSpeed) {
-                    WorkflowDataStore.getInstance().update("SpindleSpeed", desiredSpindleSpeed);
-                    WorkflowDataStore.getInstance().update("speedModified","true");
+    try {
+        Double val = 0.1;
+        String[] parts = message.split("\\|");
+        for (String p :parts) {
+            if (p.startsWith("FS:")) {
+                String numVal = p.substring(3);
+                numVal = numVal.split(",")[1];
+                if(numVal.contains(">")) numVal = numVal.substring(0,numVal.length()-2);
+                try {
+                    desiredSpindleSpeed = Double.parseDouble(numVal);
+                }   catch (NumberFormatException e) {
+                    System.out.println(numVal);
+                    System.out.println(numVal.length());
+                    System.out.println(e.getMessage());
                 }
-                if(message.contains("M3")) {
-                    Object speedModified = WorkflowDataStore.getInstance().read("speedModified");
-                    if("true".equals(speedModified)) {
-                        additionalCommunicator.setSpindleSpeed((Double)WorkflowDataStore.getInstance().read("SpindleSpeed"));
-                        WorkflowDataStore.getInstance().update("speedModified","false");
-                    }
-                } else if(message.contains("M5")) {
-                    additionalCommunicator.setSpindleSpeed(0);
-                    WorkflowDataStore.getInstance().update("speedModified","true");
-                }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                System.err.println("Val was: '" + val + '"');
+                String speedCmd = "S" + desiredSpindleSpeed + ";";
+                additionalCommunicator.send(speedCmd);
+
+                break;
             }
         }
-
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
     }
 
 }
+
+

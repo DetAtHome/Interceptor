@@ -18,7 +18,7 @@ public class OrchestratorTest {
 
     @Before
     public void setup() {
-        orchestrator = new Orchestrator(serialsRepository, workflowRepository);
+//        orchestrator = new Orchestrator(serialsRepository, workflowRepository);
     }
 
 

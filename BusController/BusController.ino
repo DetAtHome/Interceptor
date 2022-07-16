@@ -1,9 +1,12 @@
 #include <SoftwareSerial.h>
 #include <BrightBricks.h>
 #include <RemoteGenericPWM.h>
+#define LOG_DEBUG true
 
-#define BRICKBUS_PIN 12
-#define SPINDLE_PIN 11
+// was 7 to test orig was 12
+#define BRICKBUS_PIN 7
+//was 11
+#define SPINDLE_PIN 6
 #define SERIAL_RX 10
 #define SERIAL_TX 9
 
@@ -35,11 +38,13 @@ static void errorCallback(byte device, int code) {
 }
 void setup() {
   Serial.begin(115200);
+  Serial.println("Start");
   pinMode(SPINDLE_PIN,OUTPUT);
+  Serial.println("pinmode");
   controller.begin(9600);
   bus.initialize(BRICKBUS_PIN, errorCallback);
   rgeneric.initialize(&bus);
-  
+  Serial.println("Inited");
 }
 
 void loop() {
@@ -88,6 +93,11 @@ void loop() {
     Serial.println(param);
     fullyRead=false;
     switch(command) {
+    case 't':
+     case 'T':
+      analogWrite(SPINDLE_PIN, param);
+      Serial.println(param);
+      break;
     case 'd':
       if(rgeneric.setControlledPin(param)) {
         Serial.println("#ok");
@@ -114,8 +124,10 @@ void loop() {
     case 'S':
       int i = map(param,0,20000,0,255);
       analogWrite(SPINDLE_PIN, i);
+      controller.print("#ok\r");
+      controller.flush();
       break;
-        
+    
     }
     for(int j=0;j<32;j++) { string[j]= 0; }
 
